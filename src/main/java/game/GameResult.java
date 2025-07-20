@@ -1,27 +1,19 @@
 package game;
 
 public class GameResult {
-    boolean hasWinner;
+    boolean isOver;
     Player player;
 
-    public GameResult(boolean hasWinner, Player player) {
-        this.hasWinner = hasWinner;
+    public GameResult(boolean isOver, Player player) {
+        this.isOver = isOver;
         this.player = player;
     }
 
-    public boolean hasWinner() {
-        return hasWinner;
-    }
-
-    public void setHasWinner(boolean hasWinner) {
-        this.hasWinner = hasWinner;
+    public boolean isOver() {
+        return isOver;
     }
 
     public Player getPlayer() {
         return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 }
