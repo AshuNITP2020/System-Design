@@ -9,7 +9,7 @@ public class GameResult {
         this.player = player;
     }
 
-    public boolean isHasWinner() {
+    public boolean hasWinner() {
         return hasWinner;
     }
 
