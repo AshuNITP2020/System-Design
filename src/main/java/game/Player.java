@@ -10,4 +10,8 @@ public class Player {
     public String getSymbol() {
         return symbol;
     }
+
+    public Player flip() {
+        return symbol == "x" ? new Player("O") : new Player("X");
+    }
 }

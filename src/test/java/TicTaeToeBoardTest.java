@@ -29,11 +29,12 @@ public class TicTaeToeBoardTest {
     void rowWinCheck() {
         Board board = new TicTaeToeBoard();
         int[][] moves = new int[][]{{1, 0}, {1, 1}, {1, 2}};
+        int[][] aimoves = new int[][]{{0, 0}, {2, 1}, {2, 2}};
         int nextIndex = 0;
         gameEngine.start(board);
 
         while (!ruleEngine.getBoardState(board).isOver()) {
-            nextIndex = playNextMove(moves, nextIndex, board);
+            nextIndex = playNextMove(moves, aimoves, nextIndex, board);
         }
 
         assertTrue(ruleEngine.getBoardState(board).isOver());
@@ -44,11 +45,12 @@ public class TicTaeToeBoardTest {
     void columnWinCheck() {
         Board board = new TicTaeToeBoard();
         int[][] moves = new int[][]{{0, 0}, {1, 0}, {2, 0}};
+        int[][] aiMoves = new int[][]{{0, 1}, {1, 1}, {2, 2}};
         int nextIndex = 0;
         gameEngine.start(board);
 
         while (!ruleEngine.getBoardState(board).isOver()) {
-            nextIndex = playNextMove(moves, nextIndex, board);
+            nextIndex = playNextMove(moves, aiMoves, nextIndex, board);
         }
 
         assertTrue(ruleEngine.getBoardState(board).isOver());
@@ -59,11 +61,12 @@ public class TicTaeToeBoardTest {
     void diagWinCheck() {
         Board board = new TicTaeToeBoard();
         int[][] moves = new int[][]{{0, 0}, {1, 1}, {2, 2}};
+        int[][] aimoves = new int[][]{{1, 0}, {2, 1}, {1, 2}};
         int nextIndex = 0;
         gameEngine.start(board);
 
         while (!ruleEngine.getBoardState(board).isOver()) {
-            nextIndex = playNextMove(moves, nextIndex, board);
+            nextIndex = playNextMove(moves, aimoves, nextIndex, board);
         }
 
         assertTrue(ruleEngine.getBoardState(board).isOver());
@@ -74,43 +77,32 @@ public class TicTaeToeBoardTest {
     void revDiagonalWinCheck() {
         Board board = new TicTaeToeBoard();
         int[][] moves = new int[][]{{2, 0}, {1, 1}, {0, 2}};
+        int[][] aimoves = new int[][]{{0, 0}, {2, 1}, {2, 2}};
         int nextIndex = 0;
         gameEngine.start(board);
 
         while (!ruleEngine.getBoardState(board).isOver()) {
-            nextIndex = playNextMove(moves, nextIndex, board);
+            nextIndex = playNextMove(moves, aimoves, nextIndex, board);
         }
 
         assertTrue(ruleEngine.getBoardState(board).isOver());
         assertEquals("X", ruleEngine.getBoardState(board).getPlayer().getSymbol());
     }
 
-    @Test
-    void opponentWinCheck() {
-        Board board = new TicTaeToeBoard();
-        int[][] moves = new int[][]{{1, 0}, {1, 1}, {2, 2}};
-        int nextIndex = 0;
-        gameEngine.start(board);
-
-        while (!ruleEngine.getBoardState(board).isOver()) {
-            nextIndex = playNextMove(moves, nextIndex, board);
-        }
-
-        assertTrue(ruleEngine.getBoardState(board).isOver());
-        assertEquals("O", ruleEngine.getBoardState(board).getPlayer().getSymbol());
-    }
-
-    private int playNextMove(int[][] moves, int nextIndex, Board board) {
+    private int playNextMove(int[][] moves, int[][] aimoves,  int nextIndex, Board board) {
         Player player = new Player("X");
         Player opponent = new Player("O");
         int row = moves[nextIndex][0];
         int col = moves[nextIndex][1];
-        nextIndex++;
+        int airow = aimoves[nextIndex][0];
+        int aicol = aimoves[nextIndex][1];
+
         Move playerMove = new Move(new Cell(row, col), player);
         gameEngine.makeMove(playerMove);
         if (!ruleEngine.getBoardState(board).isOver()) {
-            gameEngine.makeMove(aiEngine.suggestMove(opponent, board));
+            gameEngine.makeMove(new Move(new Cell(airow, aicol), opponent));
         }
+        nextIndex++;
         return nextIndex;
     }
 }

@@ -17,8 +17,23 @@ public class TicTaeToeBoard implements Board {
     public void makeMove(Move move) {
         int row = move.getCell().getRow();
         int col = move.getCell().getCol();
+        if (cells[row][col] == null) {
+            cells[row][col] = move.getPlayer().getSymbol();
+        } else {
+            throw new IllegalArgumentException("Wrong Move");
+        }
+    }
 
-        cells[row][col] = move.getPlayer().getSymbol();
+    /**
+     * Prototype design Pattern, a clone() should be defined in the class which copy is to be made.
+     */
+    @Override
+    public TicTaeToeBoard clone() {
+        TicTaeToeBoard ticTaeToeBoard = new TicTaeToeBoard();
+        for (int i = 0; i < 3; i++) {
+            System.arraycopy(cells[i], 0, ticTaeToeBoard.cells[i], 0, 3);
+        }
+        return ticTaeToeBoard;
     }
 
     @Override
