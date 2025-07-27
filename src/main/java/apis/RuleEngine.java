@@ -5,112 +5,77 @@ import boards.TicTaeToeBoard;
 import game.GameResult;
 import game.Player;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public class RuleEngine {
 
     public GameResult getBoardState(Board board) {
         if (board instanceof TicTaeToeBoard) {
-            String[][] cells = ((TicTaeToeBoard) board).getCells();
-            boolean rowFound = true;
-            String symbol = "";
-            for (int i = 0; i < 3; i++) {
-                symbol = cells[i][0];
-                rowFound = symbol != null;
-                if (rowFound) {
-                    for (int j = 1; j < 3; j++) {
-                        if (!(cells[i][j] == symbol)) {
-                            rowFound = false;
-                            break;
-                        }
-                    }
-                }
-                if (rowFound) {
-                    break;
-                }
-            }
-            if (rowFound) {
-                return new GameResult(true, new Player(symbol));
-            }
+            GameResult result;
+            BiFunction<Integer, Integer, String> biFunctionRow = (i, j) -> board.getSymbol(i, j);
+            BiFunction<Integer, Integer, String> biFunctionCol = (i, j) -> board.getSymbol(j, i);
+            Function<Integer, String> diag = (i) -> board.getSymbol(i, i);
+            Function<Integer, String> revdiag = (i) -> board.getSymbol(2 - i, i);
 
-            boolean colFound = true;
+            result = traverseRowAndCol(biFunctionRow);
+            if (result.isOver()) return result;
 
-            for (int i = 0; i < 3; i++) {
-                symbol = cells[0][i];
-                colFound = symbol != null;
-                if (colFound) {
-                    for (int j = 0; j < 3; j++) {
-                        if (!(cells[j][i] == symbol)) {
-                            colFound = false;
-                            break;
-                        }
-                    }
-                }
-                if (colFound) {
-                    break;
-                }
-            }
+            result = traverseRowAndCol(biFunctionCol);
+            if (result.isOver()) return result;
 
-            if (colFound) {
-                return new GameResult(true, new Player(symbol));
-            }
+            result = traverseDiag(diag);
+            if (result.isOver()) return result;
 
-            boolean diagonalFound = true;
-
-            for (int i = 1; i < 3; i++) {
-                symbol = cells[0][0];
-                diagonalFound = symbol != null;
-                if (diagonalFound) {
-                    if (!(cells[i][i] == symbol)) {
-                        diagonalFound = false;
-                        break;
-                    }
-                }
-            }
-
-            if (diagonalFound) {
-                return new GameResult(true, new Player(symbol));
-            }
-
-            boolean revDiagonalFound = true;
-
-            for (int i = 1; i < 3; i++) {
-                symbol = cells[2][0];
-                revDiagonalFound = symbol != null;
-                if (revDiagonalFound) {
-                    if (!(cells[2 - i][i] == symbol)) {
-                        revDiagonalFound = false;
-                        break;
-                    }
-                }
-            }
-
-            if (revDiagonalFound) {
-                return new GameResult(true, new Player(symbol));
-            }
+            result = traverseDiag(revdiag);
+            if (result.isOver()) return result;
 
             int countOfCellsFilled = 0;
 
             for (int i = 0; i < 3; i++) {
-                for (int j = 1; j < 3; j++) {
-                    if (cells[i][j] != null) {
+                for (int j = 0; j < 3; j++) {
+                    if (board.getSymbol(i, j) != null) {
                         countOfCellsFilled++;
                     }
                 }
             }
 
             if (countOfCellsFilled == 9) {
-                return new GameResult(true, new Player(""));
+                result = new GameResult(true, new Player("_"));
             }
-
-            return new GameResult(false, new Player(""));
+            return result;
         } else {
             throw new UnsupportedOperationException("");
         }
     }
 
-    RuleEngine getRuleEngine(Board board) {
-        if (board instanceof TicTaeToeBoard) {
-            return new TicTaeBoardRuleEngine();
+    GameResult traverseDiag(Function<Integer, String> diag) {
+        return traverse(diag);
+    }
+
+    GameResult traverseRowAndCol(BiFunction<Integer, Integer, String> biFunction) {
+        GameResult result = new GameResult(false, new Player("_"));
+        for (int i = 0; i < 3; i++) {
+            int finalI = i;
+            Function<Integer, String> function = (a) -> biFunction.apply(finalI, a);
+            result = traverse(function);
+            if (result.isOver()) return result;
         }
-        throw new UnsupportedOperationException("No RuleEngine for: " + board.getClass().getName());
+        return result;
+    }
+
+    GameResult traverse(Function<Integer, String> func) {
+        GameResult result = new GameResult(false, new Player("_"));
+        boolean diagonalFound = true;
+        for (int i = 0; i < 3; i++) {
+            if (func.apply(i) == null || !func.apply(0).equals(func.apply(i))) {
+                diagonalFound = false;
+                break;
+            }
+        }
+        if (diagonalFound) {
+            result = new GameResult(true, new Player(func.apply(0)));
+        }
+        return result;
     }
 }
