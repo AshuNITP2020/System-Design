@@ -1,4 +1,4 @@
-package game;
+package tictactoe.game;
 
 public class Player {
     String symbol;

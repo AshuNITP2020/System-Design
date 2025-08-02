@@ -1,9 +1,9 @@
-package apis;
+package tictactoe.apis;
 
-import boards.Board;
-import boards.TicTaeToeBoard;
-import game.GameResult;
-import game.Player;
+import tictactoe.boards.Board;
+import tictactoe.boards.TicTaeToeBoard;
+import tictactoe.game.GameResult;
+import tictactoe.game.Player;
 
 import java.util.List;
 import java.util.function.BiFunction;

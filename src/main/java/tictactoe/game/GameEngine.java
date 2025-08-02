@@ -1,7 +1,8 @@
-package game;
+package tictactoe.game;
 
-import boards.Board;
-import boards.TicTaeToeBoard;
+
+import tictactoe.boards.Board;
+import tictactoe.boards.TicTaeToeBoard;
 
 public class GameEngine {
     Board board;

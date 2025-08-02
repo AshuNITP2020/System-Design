@@ -1,10 +1,10 @@
-import apis.AIEngine;
-import apis.RuleEngine;
-import boards.Board;
-import boards.TicTaeToeBoard;
-import game.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tictactoe.apis.AIEngine;
+import tictactoe.boards.Board;
+import tictactoe.boards.TicTaeToeBoard;
+import tictactoe.game.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

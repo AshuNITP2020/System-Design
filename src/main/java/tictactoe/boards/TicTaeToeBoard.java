@@ -1,8 +1,9 @@
-package boards;
+package tictactoe.boards;
 
-import apis.RuleEngine;
-import apis.TicTaeBoardRuleEngine;
-import game.Move;
+
+import tictactoe.apis.RuleEngine;
+import tictactoe.apis.TicTaeBoardRuleEngine;
+import tictactoe.game.Move;
 
 public class TicTaeToeBoard implements Board {
     public RuleEngine ruleEngine;

@@ -1,7 +1,7 @@
-package game;
+package tictactoe.game;
 
-import apis.RuleEngine;
-import apis.Rule;
+import tictactoe.apis.Rule;
+import tictactoe.apis.RuleEngine;
 
 public class GameState {
     public GameResult getBoardState(RuleEngine ruleEngine) {

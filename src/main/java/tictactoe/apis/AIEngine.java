@@ -1,11 +1,12 @@
-package apis;
+package tictactoe.apis;
 
-import boards.Board;
-import boards.TicTaeToeBoard;
-import game.Cell;
-import game.GameState;
-import game.Move;
-import game.Player;
+
+import tictactoe.boards.Board;
+import tictactoe.boards.TicTaeToeBoard;
+import tictactoe.game.Cell;
+import tictactoe.game.GameState;
+import tictactoe.game.Move;
+import tictactoe.game.Player;
 
 public class AIEngine {
 

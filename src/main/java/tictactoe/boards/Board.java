@@ -1,7 +1,7 @@
-package boards;
+package tictactoe.boards;
 
-import apis.RuleEngine;
-import game.Move;
+
+import tictactoe.game.Move;
 
 public interface Board {
     void makeMove(Move move);

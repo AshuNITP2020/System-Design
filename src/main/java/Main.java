@@ -1,9 +1,9 @@
-import apis.AIEngine;
-import apis.RuleEngine;
-import boards.Board;
-import boards.TicTaeToeBoard;
-import game.*;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tictactoe.apis.AIEngine;
+import tictactoe.boards.TicTaeToeBoard;
+import tictactoe.game.*;
+
 
 import java.util.Scanner;
 

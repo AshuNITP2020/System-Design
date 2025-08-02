@@ -1,6 +1,6 @@
-package apis;
+package tictactoe.apis;
 
-import boards.Board;
+import tictactoe.boards.Board;
 
 import java.util.List;
 

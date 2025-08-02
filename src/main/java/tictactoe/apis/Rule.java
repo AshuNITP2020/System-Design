@@ -1,8 +1,7 @@
-package apis;
+package tictactoe.apis;
 
-import boards.Board;
-import game.GameResult;
-
+import tictactoe.boards.Board;
+import tictactoe.game.GameResult;
 import java.util.function.Function;
 
 public class Rule<T extends Board> {
