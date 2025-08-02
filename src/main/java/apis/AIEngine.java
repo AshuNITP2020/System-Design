@@ -3,6 +3,7 @@ package apis;
 import boards.Board;
 import boards.TicTaeToeBoard;
 import game.Cell;
+import game.GameState;
 import game.Move;
 import game.Player;
 
@@ -47,8 +48,7 @@ public class AIEngine {
 
     public Move getSmartMove(Player player, TicTaeToeBoard board) {
         TicTaeToeBoard boardCopy = board.clone();
-        RuleEngine ruleEngine = new RuleEngine();
-
+        GameState gameState = new GameState();
         String[][] cells = boardCopy.getCells();
 
         for (int i = 0; i < 3; i++) {
@@ -56,7 +56,7 @@ public class AIEngine {
                 if (cells[i][j] == null) {
                     Move move =  new Move(new Cell(i, j), player);
                     boardCopy.makeMove(move);
-                    if (ruleEngine.getBoardState(boardCopy).isOver()) {
+                    if (gameState.getBoardState(board.ruleEngine).isOver()) {
                         return move;
                     }
                 }
@@ -68,7 +68,7 @@ public class AIEngine {
                 if (cells[i][j] == null) {
                     Move move =  new Move(new Cell(i, j), player.flip());
                     boardCopy.makeMove(move);
-                    if (ruleEngine.getBoardState(boardCopy).isOver()) {
+                    if (gameState.getBoardState(board.ruleEngine).isOver()) {
                         return move;
                     }
                 }

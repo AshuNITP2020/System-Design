@@ -1,12 +1,15 @@
 package boards;
 
+import apis.RuleEngine;
+import apis.TicTaeBoardRuleEngine;
 import game.Move;
 
 public class TicTaeToeBoard implements Board {
-
+    public RuleEngine ruleEngine;
     String[][] cells = new String[3][3];
 
     public TicTaeToeBoard() {
+        ruleEngine = new TicTaeBoardRuleEngine(this);
     }
 
     public String[][] getCells() {

@@ -10,17 +10,17 @@ import java.util.Scanner;
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        Board board = new TicTaeToeBoard();
+        TicTaeToeBoard board = new TicTaeToeBoard();
         GameEngine gameEngine = new GameEngine();
         AIEngine aiEngine = new AIEngine();
-        RuleEngine ruleEngine = new RuleEngine();
+        GameState gameState = new GameState();
         gameEngine.start(board);
 
         Player player = new Player("X");
         Player opponent = new Player("O");
         Scanner scanner = new Scanner(System.in);
 
-        while (!ruleEngine.getBoardState(board).isOver()) {
+        while (!gameState.getBoardState(board.ruleEngine).isOver()) {
             System.out.println("Make a move");
             int row = scanner.nextInt();
             int col = scanner.nextInt();
@@ -31,7 +31,7 @@ public class Main {
             System.out.println(board);
         }
 
-        boolean hasWinner = ruleEngine.getBoardState(board).isOver();
-        System.out.println("Player Won: " + (hasWinner ? ruleEngine.getBoardState(board).getPlayer().getSymbol() : "No Body"));
+        boolean hasWinner = gameState.getBoardState(board.ruleEngine).isOver();
+        System.out.println("Player Won: " + (hasWinner ? gameState.getBoardState(board.ruleEngine).getPlayer().getSymbol() : "No Body"));
     }
 }
