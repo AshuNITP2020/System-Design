@@ -1,6 +1,6 @@
 package splitWise.splitPattern;
 
-import splitWise.User;
+import splitWise.entity.User;
 
 public class EqualSplit extends Split {
     public EqualSplit(User user, double amount) {

@@ -1,15 +1,14 @@
 package splitWise.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import org.springframework.stereotype.Service;
 import splitWise.*;
-import splitWise.splitPattern.EqualSplit;
-import splitWise.splitPattern.ExactSplit;
-import splitWise.splitPattern.PercentSplit;
-import splitWise.splitPattern.Split;
+import splitWise.entity.Expense;
+import splitWise.entity.Group;
+import splitWise.entity.User;
+import splitWise.splitPattern.*;
+import java.util.*;
 
+@Service
 public class SplitService {
     public static Expense createEqualExpense(String expenseId, String description, double amount, User paidBy, Group group, List<User> users, Date date) {
         List<Split> splits = new ArrayList<>();
@@ -17,7 +16,7 @@ public class SplitService {
             splits.add(new EqualSplit(user, 0));
         }
         Expense expense = new Expense(expenseId, description, amount, paidBy, group, splits, date);
-        expense.calculateSplits();
+        calculateSplits(expense);
         return expense;
     }
 
@@ -36,12 +35,8 @@ public class SplitService {
             splits.add(new PercentSplit(users.get(i), percents.get(i)));
         }
         Expense expense = new Expense(expenseId, description, amount, paidBy, group, splits, date);
-        expense.calculateSplits();
+        calculateSplits(expense);
         return expense;
-    }
-
-    public void addExpense(Expense expense) {
-        expense.calculateSplits();
     }
 
     public void settleUp(User user1, User user2) {
@@ -49,5 +44,21 @@ public class SplitService {
 
     public BalanceSheet getBalanceSheet(Group group) {
         return new BalanceSheet();
+    }
+
+    public static void calculateSplits(Expense expense) {
+        List<Split> splits = expense.getSplits();
+        if (splits == null || splits.isEmpty()) return;
+        if (splits.get(0) instanceof EqualSplit) {
+            double splitAmount = Math.round((expense.getAmount() / splits.size()) * 100.0) / 100.0;
+            for (Split split : splits) {
+                split.setAmount(splitAmount);
+            }
+        } else if (splits.get(0) instanceof PercentSplit) {
+            for (Split split : splits) {
+                PercentSplit ps = (PercentSplit) split;
+                split.setAmount(Math.round((expense.getAmount() * ps.getPercent() / 100.0) * 100.0) / 100.0);
+            }
+        }
     }
 }

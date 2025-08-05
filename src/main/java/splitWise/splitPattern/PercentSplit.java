@@ -1,6 +1,6 @@
 package splitWise.splitPattern;
 
-import splitWise.User;
+import splitWise.entity.User;
 
 public class PercentSplit extends Split {
     private double percent;

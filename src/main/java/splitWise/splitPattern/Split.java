@@ -1,6 +1,6 @@
 package splitWise.splitPattern;
 
-import splitWise.User;
+import splitWise.entity.User;
 
 public abstract class Split {
     protected User user;

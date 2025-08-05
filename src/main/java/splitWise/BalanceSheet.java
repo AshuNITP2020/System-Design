@@ -1,5 +1,7 @@
 package splitWise;
 
+import splitWise.entity.User;
+
 import java.util.*;
 
 public class BalanceSheet {

@@ -1,6 +1,6 @@
 package splitWise.splitPattern;
 
-import splitWise.User;
+import splitWise.entity.User;
 
 public class ExactSplit extends Split {
     public ExactSplit(User user, double amount) {
