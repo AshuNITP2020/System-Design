@@ -28,3 +28,20 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+// Custom source directories (since we moved src to 'LLD learning' folder)
+sourceSets {
+    main {
+        java {
+            srcDirs = ['LLD learning/src/main/java']
+        }
+        resources {
+            srcDirs = ['LLD learning/src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['LLD learning/src/test/java']
+        }
+    }
+}

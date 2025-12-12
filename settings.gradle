@@ -1,1 +1,5 @@
 rootProject.name = 'System_LLD'
+
+// Include subprojects
+include 'security-challenge'
+include 'springboot-evolution'

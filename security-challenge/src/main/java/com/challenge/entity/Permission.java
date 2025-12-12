@@ -1,6 +1,8 @@
 package com.challenge.entity;
 
-public enum Permission {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Permission implements GrantedAuthority {
     DOCUMENT_READ("document:read"),
     DOCUMENT_WRITE("document:write"),
     DOCUMENT_DELETE("document:delete"),
@@ -14,6 +16,11 @@ public enum Permission {
     }
 
     public String getPermission() {
+        return permission;
+    }
+
+    @Override
+    public String getAuthority() {
         return permission;
     }
 }

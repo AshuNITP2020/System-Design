@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.learning'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starters - These are "opinionated" bundles of dependencies
+    // Before Spring Boot, you had to manually add each dependency and manage versions!
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // For development - auto-restart on code changes
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    
+    // Lombok - reduces boilerplate code
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // H2 in-memory database for learning
+    runtimeOnly 'com.h2database:h2'
+    
+    // Servlet API - included for showing Era 1 examples
+    // In old days, you had to deploy to external Tomcat server!
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+

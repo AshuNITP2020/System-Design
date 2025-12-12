@@ -4,6 +4,7 @@ import com.challenge.dto.DocumentRequest;
 import com.challenge.dto.DocumentResponse;
 import com.challenge.service.DocumentService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,8 @@ import java.util.Map;
 @RequestMapping("/api/documents")
 public class DocumentController {
 
-    private final DocumentService documentService;
+    @Autowired
+    private DocumentService documentService;
 
     public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
