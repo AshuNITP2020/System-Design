@@ -1,0 +1,35 @@
+transient     │ Variable excluded from serialization -> What exactly is serialization in detail?
+volatile, volatile vs static?
+8 vs 11 vs 17
+Q7: Can abstract class have constructor?
+    Yes, called when subclass is instantiated.
+Can interface have constructor?
+ * A: No, interfaces cannot have constructors.
+ *
+ * Q9: What is marker interface?
+ * A: Interface with no methods, used to mark capability (e.g., Serializable, Cloneable).
+ *
+• HashMap, HashSet use hashCode() first to find bucket, then equals() to find exact object
+• Breaking the contract = broken behavior in hash-based collections
+What is Iterable?
+
+Map (I)
+ *                               ┌────────────────┼────────────────┐
+ *                               │                │                │
+ *                           HashMap          TreeMap       LinkedHashMap
+ *                               │
+ *                        LinkedHashMap
+ *                               │
+ *                         Hashtable (legacy, synchronized)
+ *                               │
+ *                      ConcurrentHashMap (concurrent)
+
+ How can i make array synchronized
+
+ ❌ ClassNotFoundException
+
+Class missing at runtime
+
+❌ NoClassDefFoundError
+
+Class was present at compile time but missing at runtime
