@@ -284,7 +284,7 @@ package com.learning.java_interview;
  * @see _01_OOPConcepts
  * @see _02_CollectionsFramework
  * @see _03_MultithreadingConcurrency
- * @see _04_Java8Features
+ * @see _07_Java8Features
  */
 public class _00_JavaInterviewGuide {
 

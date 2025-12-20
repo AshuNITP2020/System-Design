@@ -201,7 +201,7 @@ import java.sql.SQLException;
  *
  * @author Java Interview Guide
  */
-public class _05_ExceptionHandling {
+public class _04_ExceptionHandling {
 
     public static void main(String[] args) {
         System.out.println("═══════════════════════════════════════════════════════════════════════════════════");

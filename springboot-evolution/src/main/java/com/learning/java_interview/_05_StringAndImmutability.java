@@ -216,7 +216,7 @@ package com.learning.java_interview;
  *
  * @author Java Interview Guide
  */
-public class _06_StringAndImmutability {
+public class _05_StringAndImmutability {
 
     public static void main(String[] args) {
         System.out.println("═══════════════════════════════════════════════════════════════════════════════════");

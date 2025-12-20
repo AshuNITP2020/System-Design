@@ -268,7 +268,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author Java Interview Guide
  */
-public class _04_Java8Features {
+public class _07_Java8Features {
 
     public static void main(String[] args) {
         System.out.println("═══════════════════════════════════════════════════════════════════════════════════");

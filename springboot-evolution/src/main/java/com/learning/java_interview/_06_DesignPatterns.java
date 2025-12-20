@@ -137,7 +137,7 @@ import java.util.*;
  *
  * @author Java Interview Guide
  */
-public class _07_DesignPatterns {
+public class _06_DesignPatterns {
 
     public static void main(String[] args) {
         System.out.println("═══════════════════════════════════════════════════════════════════════════════════");
