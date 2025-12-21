@@ -1,8 +1,9 @@
-package com.learning.era3_springboot.config;
+package com.learning.spring.era3_springboot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.learning.era3_springboot.dto.ApiResponse;
+import com.learning.spring.era3_springboot.dto.ApiResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;

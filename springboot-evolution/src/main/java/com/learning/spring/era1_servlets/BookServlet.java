@@ -1,4 +1,4 @@
-package com.learning.era1_servlets;
+package com.learning.spring.era1_servlets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

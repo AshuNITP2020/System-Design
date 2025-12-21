@@ -1,4 +1,4 @@
-package com.learning.era3_springboot.entity;
+package com.learning.spring.era3_springboot.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

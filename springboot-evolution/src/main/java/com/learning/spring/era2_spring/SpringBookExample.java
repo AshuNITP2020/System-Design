@@ -1,4 +1,4 @@
-package com.learning.era2_spring;
+package com.learning.spring.era2_spring;
 
 /**
  * ============================================================================

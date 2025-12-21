@@ -8,9 +8,9 @@ Can interface have constructor?
 Q9: What is marker interface?
 A: Interface with no methods, used to mark capability (e.g., Serializable, Cloneable).
 
-• HashMap, HashSet use hashCode() first to find bucket, then equals() to find exact object
-• Breaking the contract = broken behavior in hash-based collections
 What is Iterable?
+
+Transient
 
 Map (I)
  *                               ┌────────────────┼────────────────┐
@@ -29,9 +29,6 @@ Where null keys and null values can't be assigned?
 
  *  │        Feature         │        HashMap          │       Hashtable         │      ConcurrentHashMap        
 
- Why load factor of 0.75?
- * A: Trade-off between space and time. Lower = more space, fewer collisions. Higher = less space, more collisions.
- *
 
 Q7: Difference between Comparable and Comparator?
     Comparable: natural ordering in class itself (compareTo). Comparator: external ordering logic (compare).
@@ -63,7 +60,36 @@ Collections ->
 2. Stream API in detail and some questions(around 10)
 
 
+Questions:
+1. How does HashMap work internally after Java 8?
+2. Why is HashMap not thread-safe even with final keys?
+3. What happens internally when a HashMap reaches threshold capacity?
+4. Difference between ConcurrentHashMap and Collections.synchronizedMap?
+5. How does JVM decide memory allocation between Heap and Stack?
+6. What causes OutOfMemoryError even when GC is running?
+7. Explain Strong, Weak, Soft, and Phantom references with use cases.
+8. Why String is immutable and how it improves performance?
+9. Difference between ==, equals(), and hashCode() in real scenarios.
+10. How does JVM handle class loading at runtime?
 
+11. Explain ClassLoader hierarchy and when custom ClassLoader is needed.
+12. What happens internally when you call new Thread().start()?
+13. Why wait() and notify() are defined in Object class?
+14. Difference between Runnable and Callable in concurrency?
+15. What is the ForkJoinPool and when should you use it?
+16. How does Java achieve thread safety without synchronization?
+17. Explain happens-before relationship in Java Memory Model.
+18. Why volatile does not guarantee atomicity?
+19. Difference between optimistic and pessimistic locking.
+20. What are memory leaks in Java? Can GC prevent them fully?
 
-
-
+21. How does Stream API work internally?
+22. Difference between parallelStream() and multithreading?
+23. When should you avoid parallel streams?
+24. How does Optional prevent NullPointerException?
+25. What is method reference and how JVM resolves it?
+26. Explain default methods in interfaces and their real use.
+27. How does Java handle backward compatibility?
+28. What happens if two threads deadlock — how JVM reacts?
+29. Difference between fail-fast and fail-safe iterators.
+30. How would you design a thread-safe LRU cache in Java?

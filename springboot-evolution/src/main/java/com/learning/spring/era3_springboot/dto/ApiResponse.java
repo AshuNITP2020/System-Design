@@ -1,4 +1,4 @@
-package com.learning.era3_springboot.dto;
+package com.learning.spring.era3_springboot.dto;
 
 import java.time.LocalDateTime;
 

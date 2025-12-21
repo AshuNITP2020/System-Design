@@ -1,9 +1,10 @@
-package com.learning.era3_springboot.config;
+package com.learning.spring.era3_springboot.config;
 
-import com.learning.era3_springboot.entity.Book;
-import com.learning.era3_springboot.repository.BookRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.learning.spring.era3_springboot.entity.Book;
+import com.learning.spring.era3_springboot.repository.BookRepository;
 
 /**
  * ============================================================================

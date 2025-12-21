@@ -1,10 +1,11 @@
-package com.learning.era3_springboot.repository;
+package com.learning.spring.era3_springboot.repository;
 
-import com.learning.era3_springboot.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.learning.spring.era3_springboot.entity.Book;
 
 import java.util.List;
 import java.util.Optional;
