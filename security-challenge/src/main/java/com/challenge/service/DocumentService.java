@@ -3,9 +3,12 @@ package com.challenge.service;
 import com.challenge.dto.DocumentRequest;
 import com.challenge.dto.DocumentResponse;
 import com.challenge.entity.Document;
+import com.challenge.entity.DocumentVisibility;
+import com.challenge.entity.Role;
 import com.challenge.entity.User;
 import com.challenge.repository.DocumentRepository;
 import com.challenge.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,12 +54,20 @@ public class DocumentService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        // TODO: Add authorization check here
-        // User should only be able to view:
-        // - Their own documents
-        // - Public documents
-        // - Shared documents they have access to
-        // - Admin can view all
+        User requestingUser = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Authorization check: User can view if:
+        // 1. They are the owner
+        // 2. Document is PUBLIC
+        // 3. They are an ADMIN (can view all documents)
+        boolean isOwner = document.getOwner().getId().equals(requestingUserId);
+        boolean isPublic = document.getVisibility() == DocumentVisibility.PUBLIC;
+        boolean isAdmin = requestingUser.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isPublic && !isAdmin) {
+            throw new AccessDeniedException("You do not have permission to view this document");
+        }
 
         return mapToResponse(document);
     }
@@ -66,12 +77,14 @@ public class DocumentService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        // TODO: Add authorization check - only owner can update
-        // Hint: Compare document.getOwner().getId() with requestingUserId
+        // Authorization check: Only owner can update
+        if (!document.getOwner().getId().equals(requestingUserId)) {
+            throw new AccessDeniedException("Only the document owner can update this document");
+        }
 
         document.setTitle(request.getTitle());
         document.setContent(request.getContent());
-        // TODO: Update visibility
+        // TODO: Update visibility if needed
 
         Document updated = documentRepository.save(document);
         return mapToResponse(updated);
@@ -82,7 +95,16 @@ public class DocumentService {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new RuntimeException("Document not found"));
 
-        // TODO: Add authorization check - only owner OR admin can delete
+        User requestingUser = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Authorization check: Only owner OR admin can delete
+        boolean isOwner = document.getOwner().getId().equals(requestingUserId);
+        boolean isAdmin = requestingUser.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("Only the document owner or an admin can delete this document");
+        }
 
         documentRepository.delete(document);
     }

@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter;
  * @FunctionalInterface annotation is optional but recommended.
  *
  * BUILT-IN FUNCTIONAL INTERFACES:
- * ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
- * │                                                                                                                │
+ * ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+ * │                                                                                                               │
  * │  Interface          │ Method              │ Input    │ Output   │ Use Case                                    │
  * │  ───────────────────┼─────────────────────┼──────────┼──────────┼─────────────────────────────────────────────│
  * │  Predicate<T>       │ test(T t)           │ T        │ boolean  │ Filtering, matching conditions              │
@@ -36,8 +36,8 @@ import java.time.format.DateTimeFormatter;
  * │  BiConsumer<T,U>    │ accept(T t, U u)    │ T, U     │ void     │ Two input side effect                       │
  * │  UnaryOperator<T>   │ apply(T t)          │ T        │ T        │ Same type transformation                    │
  * │  BinaryOperator<T>  │ apply(T t1, T t2)   │ T, T     │ T        │ Reduce, combine same types                  │
- * │                                                                                                                │
- * └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+ * │                                                                                                               │
+ * └───────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
  *
  *
  * ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗

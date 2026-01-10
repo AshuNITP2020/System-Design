@@ -1,37 +1,69 @@
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import tictactoe.apis.AIEngine;
-import tictactoe.boards.TicTaeToeBoard;
 import tictactoe.game.*;
 
 
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        TicTaeToeBoard board = new TicTaeToeBoard();
-        GameEngine gameEngine = new GameEngine();
-        AIEngine aiEngine = new AIEngine();
-        GameState gameState = new GameState();
-        gameEngine.start(board);
+        Map<User, String> map = new HashMap<>();
 
-        Player player = new Player("X");
-        Player opponent = new Player("O");
-        Scanner scanner = new Scanner(System.in);
+        User u1 = new User(1);
+        User u2 = new User(1);
+        User u3 = new User(1);
+        System.out.println(u1.hashCode());
+        System.out.println(u2.hashCode());
 
-        while (!gameState.getBoardState(board.ruleEngine).isOver()) {
-            System.out.println("Make a move");
-            int row = scanner.nextInt();
-            int col = scanner.nextInt();
-            Move playerMove = new Move(new Cell(row, col), player);
-            gameEngine.makeMove(playerMove);
-            Move opponentMove = aiEngine.suggestMove(opponent, board);
-            gameEngine.makeMove(opponentMove);
-            System.out.println(board);
-        }
+        map.put(u1, "First");
+        map.put(u2, "Second");
 
-        boolean hasWinner = gameState.getBoardState(board.ruleEngine).isOver();
-        System.out.println("Player Won: " + (hasWinner ? gameState.getBoardState(board.ruleEngine).getPlayer().getSymbol() : "No Body"));
+        System.out.println(map.size());        // 2
+        System.out.println(map.get(u1));       // First
+        System.out.println(map.get(u2));       // Second
+        System.out.println(map.get(u3));
+
+        System.out.println(AppConfig.ENVIRONMENT);
+
+        AppConfig.changeEnvironment("PROD");
+
+        System.out.println(AppConfig.ENVIRONMENT);
+
     }
 }
+
+class AppConfig {
+
+    // static variable (class-level)
+    public static String ENVIRONMENT = "DEV";
+
+    public static void changeEnvironment(String env) {
+        ENVIRONMENT = env;
+    }
+
+}
+
+class User {
+    int id;
+
+    User(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+}
+

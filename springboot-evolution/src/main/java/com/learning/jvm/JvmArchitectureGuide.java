@@ -12,7 +12,7 @@ package com.learning.jvm;
  * ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  * │                                    PACKAGE CONTENTS                                                     │
  * ├─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
- * │  1. JvmArchitectureGuide.java    - This file, main overview                                            │
+ * │  1. JvmArchitectureGuide.java    - This file, main overview                                             │
  * │  2. ClassLoaderDemo.java         - ClassLoader hierarchy and examples                                   │
  * │  3. MemoryAreasDemo.java         - Stack, Heap, Method Area demonstrations                              │
  * │  4. GarbageCollectionDemo.java   - GC algorithms and practical examples                                 │
@@ -22,7 +22,7 @@ package com.learning.jvm;
  *
  *
  * ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
- * ║                                    1. WHAT IS JAVA?                                                    ║
+ * ║                                    1. WHAT IS JAVA?                                                   ║
  * ╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝
  *
  * Java is a HIGH-LEVEL, CLASS-BASED, OBJECT-ORIENTED programming language designed with:
@@ -149,9 +149,9 @@ package com.learning.jvm;
  * │  │  │         METHOD AREA              │  │                      HEAP                            │  │  │
  * │  │  │     (Metaspace in Java 8+)       │  │  ┌────────────────────────┬───────────────────────┐  │  │  │
  * │  │  │                                  │  │  │    Young Generation    │    Old Generation     │  │  │  │
- * │  │  │  • Class structure/metadata      │  │  │  ┌──────┬──────┬─────┐│                       │  │  │  │
- * │  │  │  • Runtime constant pool         │  │  │  │ Eden │  S0  │ S1  ││     (Tenured)         │  │  │  │
- * │  │  │  • Field and method data         │  │  │  └──────┴──────┴─────┘│                       │  │  │  │
+ * │  │  │  • Class structure/metadata      │  │  │  ┌──────┬──────┬─────┐ │                       │  │  │  │
+ * │  │  │  • Runtime constant pool         │  │  │  │ Eden │  S0  │ S1  │ │     (Tenured)         │  │  │  │
+ * │  │  │  • Field and method data         │  │  │  └──────┴──────┴─────┘ │                       │  │  │  │
  * │  │  │  • Method bytecode               │  │  └────────────────────────┴───────────────────────┘  │  │  │
  * │  │  │  • Static variables              │  │                                                      │  │  │
  * │  │  └──────────────────────────────────┘  └──────────────────────────────────────────────────────┘  │  │
@@ -162,7 +162,7 @@ package com.learning.jvm;
  * │  │  ┌────────────────────┐  ┌────────────────────────┐  ┌────────────────────────────────────────┐  │  │
  * │  │  │    PC REGISTER     │  │      JVM STACK         │  │       NATIVE METHOD STACK              │  │  │
  * │  │  │                    │  │                        │  │                                        │  │  │
- * │  │  │ Address of current │  │  Stack Frames:         │  │  For native (C/C++) method calls      │  │  │
+ * │  │  │ Address of current │  │  Stack Frames:         │  │  For native (C/C++) method calls       │  │  │
  * │  │  │ executing bytecode │  │  • Local Variables     │  │  via JNI                               │  │  │
  * │  │  │ instruction        │  │  • Operand Stack       │  │                                        │  │  │
  * │  │  │                    │  │  • Frame Data          │  │                                        │  │  │

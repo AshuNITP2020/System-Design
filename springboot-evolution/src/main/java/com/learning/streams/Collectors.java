@@ -233,7 +233,7 @@ public class Collectors {
 
     static void demonstrateJoiningCollectors() {
         System.out.println("╔═══════════════════════════════════════════════════════════════════════════════════╗");
-        System.out.println("║                             2. JOINING COLLECTORS                                  ║");
+        System.out.println("║                             2. JOINING COLLECTORS                                 ║");
         System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════╝\n");
 
         List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "David");

@@ -1,0 +1,8 @@
+Binary should be sent over network
+    1. Data is ENCRYPTED (for security)
+    "Hello" → Encrypt → "X7#kL9@m"
+
+    2. Encrypted data is ENCODED (for transmission)
+    "X7#kL9@m" → Base64 Encode → "WDcjI2s5QG0="
+
+    3. Transmitted over network
