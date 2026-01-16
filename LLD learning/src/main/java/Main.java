@@ -25,6 +25,8 @@ public class Main {
         System.out.println(map.get(u1));       // First
         System.out.println(map.get(u2));       // Second
         System.out.println(map.get(u3));
+        System.out.println("keyset" + map.keySet().size());
+
 
         System.out.println(AppConfig.ENVIRONMENT);
 
@@ -58,12 +60,12 @@ class User {
         return Objects.hash(id);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return id == user.id;
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof User)) return false;
+//        User user = (User) o;
+//        return id == user.id;
+//    }
 }
 
