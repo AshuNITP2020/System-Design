@@ -1,0 +1,117 @@
+{
+  "type": "record",
+  "name": "AvroTableMetadata",
+  "namespace": "com.learning.comparison.avro",
+  "doc": "Avro schema for database table metadata",
+  "fields": [
+    {
+      "name": "tableName",
+      "type": "string",
+      "doc": "Name of the table"
+    },
+    {
+      "name": "databaseName",
+      "type": "string",
+      "doc": "Name of the database"
+    },
+    {
+      "name": "schemaName",
+      "type": "string",
+      "doc": "Schema name"
+    },
+    {
+      "name": "tableType",
+      "type": "string",
+      "doc": "Type of table (TABLE, VIEW, etc.)"
+    },
+    {
+      "name": "columns",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "AvroColumnMetadata",
+          "fields": [
+            {"name": "columnName", "type": "string"},
+            {"name": "dataType", "type": "string"},
+            {"name": "isNullable", "type": "boolean"},
+            {"name": "isPrimaryKey", "type": "boolean"},
+            {"name": "defaultValue", "type": ["null", "string"], "default": null},
+            {"name": "columnSize", "type": ["null", "int"], "default": null},
+            {"name": "precision", "type": ["null", "int"], "default": null},
+            {"name": "scale", "type": ["null", "int"], "default": null},
+            {"name": "columnComment", "type": ["null", "string"], "default": null}
+          ]
+        }
+      },
+      "doc": "List of columns"
+    },
+    {
+      "name": "indexes",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "AvroIndexMetadata",
+          "fields": [
+            {"name": "indexName", "type": "string"},
+            {"name": "columns", "type": {"type": "array", "items": "string"}},
+            {"name": "isUnique", "type": "boolean"},
+            {"name": "indexType", "type": "string"}
+          ]
+        }
+      },
+      "doc": "List of indexes"
+    },
+    {
+      "name": "foreignKeys",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "AvroForeignKeyMetadata",
+          "fields": [
+            {"name": "constraintName", "type": "string"},
+            {"name": "columnNames", "type": {"type": "array", "items": "string"}},
+            {"name": "referencedTable", "type": "string"},
+            {"name": "referencedColumns", "type": {"type": "array", "items": "string"}},
+            {"name": "onDelete", "type": ["null", "string"], "default": null},
+            {"name": "onUpdate", "type": ["null", "string"], "default": null}
+          ]
+        }
+      },
+      "doc": "List of foreign keys"
+    },
+    {
+      "name": "rowCount",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Number of rows in the table"
+    },
+    {
+      "name": "tableSizeBytes",
+      "type": ["null", "long"],
+      "default": null,
+      "doc": "Size of the table in bytes"
+    },
+    {
+      "name": "createdAt",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Table creation timestamp"
+    },
+    {
+      "name": "lastModified",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Last modification timestamp"
+    },
+    {
+      "name": "tableComment",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Table comment/description"
+    }
+  ]
+}
+

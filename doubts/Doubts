@@ -1,0 +1,95 @@
+transient     │ Variable excluded from serialization -> What exactly is serialization in detail?
+8 vs 11 vs 17
+Q7: Can abstract class have constructor?
+    Yes, called when subclass is instantiated.
+Can interface have constructor?
+ A: No, interfaces cannot have constructors.
+
+Q9: What is marker interface?
+A: Interface with no methods, used to mark capability (e.g., Serializable, Cloneable).
+
+What is Iterable?
+
+Transient
+
+Map (I)
+ *                               ┌────────────────┼────────────────┐
+ *                               │                │                │
+ *                           HashMap          TreeMap       LinkedHashMap
+ *                               │
+ *                        LinkedHashMap
+ *                               │
+ *                         Hashtable (legacy, synchronized)
+ *                               │
+ *                      ConcurrentHashMap (concurrent)
+
+Where null keys and null values can't be assigned?
+
+ How can i make array synchronized
+
+ *  │        Feature         │        HashMap          │       Hashtable         │      ConcurrentHashMap        
+
+
+Q7: Difference between Comparable and Comparator?
+    Comparable: natural ordering in class itself (compareTo). Comparator: external ordering logic (compare).
+
+FAIL-FAST vs FAIL-SAFE ITERATORS
+Iterator 
+
+Threads :
+RUNNABLE vs CALLABLE vs THREAD
+Thread Lifecycle
+Thread Pool
+
+volatile, volatile vs static?
+
+When JVM would crash?
+
+String -> 
+
+1. HASHCODE CACHING 
+2. interning in detail
+3. Why StringBuilder and StringBuffer is required? Usages?
+4. If i am using interner, is it have a separate pool of that type of objects or it will be stored in heap memory?
+5. static final class ImmutablePerson, why static is required?
+6. What is defensive copy.
+
+
+Collections ->
+1. all classes inbuilt methods
+2. Stream API in detail and some questions(around 10)
+
+
+Questions:
+1. How does HashMap work internally after Java 8?
+2. Why is HashMap not thread-safe even with final keys?
+3. What happens internally when a HashMap reaches threshold capacity?
+4. Difference between ConcurrentHashMap and Collections.synchronizedMap?
+5. How does JVM decide memory allocation between Heap and Stack?
+6. What causes OutOfMemoryError even when GC is running?
+7. Explain Strong, Weak, Soft, and Phantom references with use cases.
+8. Why String is immutable and how it improves performance?
+9. Difference between ==, equals(), and hashCode() in real scenarios.
+10. How does JVM handle class loading at runtime?
+
+11. Explain ClassLoader hierarchy and when custom ClassLoader is needed.
+12. What happens internally when you call new Thread().start()?
+13. Why wait() and notify() are defined in Object class?
+14. Difference between Runnable and Callable in concurrency?
+15. What is the ForkJoinPool and when should you use it?
+16. How does Java achieve thread safety without synchronization?
+17. Explain happens-before relationship in Java Memory Model.
+18. Why volatile does not guarantee atomicity?
+19. Difference between optimistic and pessimistic locking.
+20. What are memory leaks in Java? Can GC prevent them fully?
+
+21. How does Stream API work internally?
+22. Difference between parallelStream() and multithreading?
+23. When should you avoid parallel streams?
+24. How does Optional prevent NullPointerException?
+25. What is method reference and how JVM resolves it?
+26. Explain default methods in interfaces and their real use.
+27. How does Java handle backward compatibility?
+28. What happens if two threads deadlock — how JVM reacts?
+29. Difference between fail-fast and fail-safe iterators.
+30. How would you design a thread-safe LRU cache in Java?

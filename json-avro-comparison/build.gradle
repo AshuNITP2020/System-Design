@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+}
+
+group = 'com.learning'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Jackson for JSON
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0'
+    
+    // Apache Avro
+    implementation 'org.apache.avro:avro:1.11.3'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    
+    // Lombok for cleaner code
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'com.learning.comparison.PerformanceComparisonApp'
+}
+
+// Task to run folder comparison
+task runFolderComparison(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.learning.comparison.FolderComparisonApp'
+    
+    if (project.hasProperty('args')) {
+        args = project.property('args').split()
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Configure Avro plugin
+avro {
+    createSetters = true
+    createOptionalGetters = false
+    gettersReturnOptional = false
+    optionalGettersForNullableFieldsOnly = false
+    fieldVisibility = 'PRIVATE'
+}
+
