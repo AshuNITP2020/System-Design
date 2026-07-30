@@ -142,11 +142,18 @@
   const q = $('#q'), results = $('#results');
   let index = null, sel = -1;
 
-  async function loadIndex() {
-    if (index) return index;
-    const res = await fetch(window.SITE_ROOT + '/search-index.json');
-    index = await res.json();
-    return index;
+  // Loaded via a script tag rather than fetch(), so search also works when the
+  // site is opened straight off disk (file:// blocks fetch).
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (window.SEARCH_INDEX) { index = window.SEARCH_INDEX; return Promise.resolve(index); }
+    return new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = window.SITE_ROOT + '/search-index.js';
+      s.onload = () => { index = window.SEARCH_INDEX || []; resolve(index); };
+      s.onerror = () => { index = []; resolve(index); };
+      document.head.appendChild(s);
+    });
   }
 
   function score(page, terms) {

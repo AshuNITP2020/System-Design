@@ -320,11 +320,13 @@ for (const page of ordered) {
 
   const plain = content.replace(/<textarea[\s\S]*?<\/textarea>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   searchIndex.push({ url: page.url, title: page.title, short: page.short, desc: page.desc,
-                     headings: headings.map(h => h.text), text: plain.slice(0, 4000) });
+                     headings: headings.map(h => h.text), text: plain.slice(0, 30000) });
   console.log(`  ${page.url}`);
 }
 
-writeFileSync(join(SITE, 'search-index.json'), JSON.stringify(searchIndex));
+// Emitted as JS, not JSON: a <script> tag works from file:// where fetch() is
+// blocked by CORS, so search keeps working when you just open site/index.html.
+writeFileSync(join(SITE, 'search-index.js'), `window.SEARCH_INDEX=${JSON.stringify(searchIndex)};`);
 
 /* ------------------------------------------------------------------ */
 /* print.html - every page in one document, for Ctrl-P / tools/pdf.sh  */
