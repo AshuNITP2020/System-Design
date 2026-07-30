@@ -28,6 +28,11 @@
   --mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Consolas, "DejaVu Sans Mono", monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
   --topbar-h: 54px;
+
+  /* Reading widths. Prose keeps a comfortable measure; code, tables and
+     headings run wider so they aren't squeezed into the text column. */
+  --measure: 90ch;
+  --wide: 1180px;
 }
 
 html[data-theme="dark"] {
@@ -61,8 +66,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 17px;
+  line-height: 1.72;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -112,11 +117,11 @@ a:hover { text-decoration: underline; }
 /* ---------------------------- layout ---------------------------- */
 .shell {
   display: grid;
-  grid-template-columns: 264px minmax(0, 1fr) 224px;
-  gap: 34px;
-  max-width: 1500px;
+  grid-template-columns: 248px minmax(0, 1fr) 212px;
+  gap: 30px;
+  max-width: 1760px;
   margin: 0 auto;
-  padding: 0 22px;
+  padding: 0 24px;
   align-items: start;
 }
 
@@ -125,7 +130,8 @@ a:hover { text-decoration: underline; }
   height: calc(100vh - var(--topbar-h));
   overflow-y: auto;
   padding: 26px 6px 60px 0;
-  font-size: 14.5px;
+  font-size: 14px;
+  line-height: 1.45;
 }
 .nav-section + .nav-section { margin-top: 22px; }
 .nav-sec-label {
@@ -133,14 +139,14 @@ a:hover { text-decoration: underline; }
   color: var(--ink-faint); font-weight: 700; padding: 0 10px 8px;
 }
 .nav-link {
-  display: flex; align-items: center; gap: 9px;
+  display: flex; align-items: flex-start; gap: 9px;
   padding: 6px 10px; border-radius: 7px; color: var(--ink-soft);
   border-left: 2px solid transparent;
 }
 .nav-link:hover { background: var(--bg-sunken); color: var(--ink); text-decoration: none; }
 .nav-link.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; border-left-color: var(--accent); }
 .nav-link .badge {
-  flex: 0 0 auto; min-width: 30px; text-align: center;
+  flex: 0 0 auto; min-width: 30px; text-align: center; margin-top: 2px;
   font-size: 10.5px; font-weight: 700; letter-spacing: .5px;
   background: var(--bg-sunken); color: var(--ink-faint);
   border-radius: 5px; padding: 1px 5px;
@@ -171,8 +177,18 @@ main { min-width: 0; padding: 30px 0 80px; }
 .toc a.toc-3 { padding-left: 24px; font-size: 12.8px; }
 
 /* ---------------------------- prose ---------------------------- */
-.prose { max-width: 76ch; }
+/* Text-level blocks keep a readable measure; code, tables and headings get
+   the full column so they aren't cramped into the prose width. */
+.prose { max-width: var(--wide); }
 .prose > *:first-child { margin-top: 0; }
+.prose > p,
+.prose > ul,
+.prose > ol,
+.prose > blockquote,
+.prose > .callout,
+.prose > .definition,
+.prose > .lede,
+.prose > .sample-note { max-width: var(--measure); }
 
 .prose h1 { font-size: 2.15rem; line-height: 1.2; letter-spacing: -.6px; margin: 0 0 .35em; }
 .prose h2 {
@@ -231,7 +247,7 @@ blockquote { margin: 1.4em 0; padding-left: 18px; border-left: 3px solid var(--l
 
 /* ---------------------------- tables ---------------------------- */
 .tablewrap { overflow-x: auto; margin: 1.4em 0; border: 1px solid var(--line); border-radius: 10px; }
-table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
 th, td { padding: 10px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-soft); }
 th { background: var(--bg-sunken); font-size: 11.5px; text-transform: uppercase; letter-spacing: .7px; color: var(--ink-soft); font-weight: 700; white-space: nowrap; }
 tbody tr:last-child td { border-bottom: 0; }
@@ -278,13 +294,13 @@ td code { white-space: nowrap; }
 
 .sample .pane { display: none; }
 .sample .pane.active { display: block; }
-.sample .cm-src { width: 100%; min-height: 120px; font-family: var(--mono); font-size: 13px; border: 0; }
-.sample .CodeMirror { height: auto; max-height: 460px; font-family: var(--mono); font-size: 13px; line-height: 1.55; }
+.sample .cm-src { width: 100%; min-height: 120px; font-family: var(--mono); font-size: 13.5px; border: 0; }
+.sample .CodeMirror { height: auto; max-height: 600px; font-family: var(--mono); font-size: 13.5px; line-height: 1.6; }
 .sample.expanded .CodeMirror { max-height: none; }
 .sample .CodeMirror-scroll { min-height: 0; }
 .sample .CodeMirror-gutters { border-right: 1px solid var(--line); background: var(--bg-soft); }
 .sample .CodeMirror-linenumber { color: var(--ink-faint); opacity: .7; }
-.sample pre.static { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.55; background: var(--bg); }
+.sample pre.static { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.6; background: var(--bg); }
 
 .sample .runbar {
   display: flex; align-items: center; gap: 8px;
@@ -300,7 +316,7 @@ td code { white-space: nowrap; }
 .edited-flag { font-size: 11px; color: var(--warn); text-transform: none; letter-spacing: 0; font-weight: 600; }
 
 /* ---------------------------- page nav / footer ---------------------------- */
-.pagenav { display: flex; justify-content: space-between; gap: 16px; margin: 56px 0 0; max-width: 76ch; }
+.pagenav { display: flex; justify-content: space-between; gap: 16px; margin: 56px 0 0; max-width: var(--wide); }
 .pn {
   flex: 1; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px;
   color: var(--ink); font-weight: 600; line-height: 1.4;
@@ -308,7 +324,7 @@ td code { white-space: nowrap; }
 .pn:hover { border-color: var(--accent); text-decoration: none; }
 .pn span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-faint); font-weight: 700; margin-bottom: 2px; }
 .pn.next { text-align: right; }
-.foot { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); max-width: 76ch; }
+.foot { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--ink-faint); max-width: var(--measure); }
 
 /* ---------------------------- responsive ---------------------------- */
 @media (max-width: 1180px) {
@@ -335,7 +351,8 @@ td code { white-space: nowrap; }
   .topbar, .sidebar, .toc, .pagenav, .sample .actions, .anchor { display: none !important; }
   .shell { display: block; max-width: none; padding: 0; }
   body { font-size: 10.5pt; }
-  .prose { max-width: none; }
+  /* the on-screen reading measure would leave half of each page blank */
+  .prose, .prose > *, .pagenav, .foot { max-width: none !important; }
   .sample { break-inside: avoid; box-shadow: none; }
   .sample .CodeMirror { max-height: none; }
   a { color: inherit; text-decoration: none; }
