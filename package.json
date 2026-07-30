@@ -1,0 +1,15 @@
+{
+  "name": "lld-hld-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Low Level Design / High Level Design notes, with runnable Java samples",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && python3 -m http.server 8080 --directory site",
+    "pdf": "node build.mjs && bash tools/pdf.sh"
+  },
+  "dependencies": {
+    "marked": "^12.0.2"
+  }
+}

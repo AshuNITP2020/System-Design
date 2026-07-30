@@ -1,0 +1,8 @@
+{
+  "title": "LLD · HLD Notes",
+  "credit": "Notes based on Shrayansh Jain's Low Level Design series (Concept && Coding), with additional context, trade-offs and runnable code added while studying.",
+  "sections": [
+    { "id": "lld", "label": "Low Level Design" },
+    { "id": "hld", "label": "High Level Design" }
+  ]
+}

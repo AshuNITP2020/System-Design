@@ -1,0 +1,8 @@
+node_modules/
+site/
+build/
+dist/
+*.class
+.DS_Store
+.idea/
+.vscode/

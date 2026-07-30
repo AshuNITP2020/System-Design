@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} · {{SITE_TITLE}}</title>
+<meta name="description" content="{{DESC}}">
+<link rel="stylesheet" href="{{ROOT}}/vendor/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="{{ROOT}}/vendor/codemirror/addon/foldgutter.css">
+<link rel="stylesheet" href="{{ROOT}}/vendor/codemirror/theme/material-darker.css">
+<link rel="stylesheet" href="{{ROOT}}/assets/styles.css">
+<script>/* set theme before paint to avoid a flash */
+ (function(){var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  document.documentElement.dataset.theme=t;})();</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="icon-btn menu" id="menuBtn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="{{ROOT}}/index.html">{{SITE_TITLE}}</a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Search notes…  /" autocomplete="off" aria-label="Search notes">
+    <div id="results" class="results" hidden></div>
+  </div>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark theme" title="Toggle theme">◐</button>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">{{SIDEBAR}}</aside>
+
+  <main id="main">
+    <article class="prose">
+      {{CONTENT}}
+    </article>
+    <nav class="pagenav">{{PAGENAV}}</nav>
+    <footer class="foot">{{CREDIT}}</footer>
+  </main>
+
+  <aside class="toc">{{TOC}}</aside>
+</div>
+
+<script src="{{ROOT}}/vendor/codemirror/lib/codemirror.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/mode/clike.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/foldcode.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/foldgutter.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/brace-fold.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/comment-fold.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/matchbrackets.js"></script>
+<script src="{{ROOT}}/vendor/codemirror/addon/active-line.js"></script>
+<script>window.SITE_ROOT = "{{ROOT}}";</script>
+<script src="{{ROOT}}/assets/app.js"></script>
+</body>
+</html>
