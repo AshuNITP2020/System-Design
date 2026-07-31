@@ -161,7 +161,10 @@ a:hover { text-decoration: underline; }
 .nav-group summary::before { content: "▸"; display: inline-block; width: 14px; color: var(--ink-faint); transition: transform .15s; }
 .nav-group[open] summary::before { transform: rotate(90deg); }
 .nav-group summary:hover { background: var(--bg-sunken); }
-.nav-group .nav-link { margin-left: 14px; }
+/* nested groups (e.g. Design Patterns -> Creational -> Factory) */
+.nav-children { margin-left: 9px; padding-left: 5px; border-left: 1px solid var(--line); }
+.nav-group.lvl-1 > summary { font-weight: 500; font-size: 13.5px; color: var(--ink-soft); }
+.nav-group.lvl-2 > summary { font-weight: 500; font-size: 13px; color: var(--ink-faint); }
 
 main { min-width: 0; padding: 30px 0 80px; }
 

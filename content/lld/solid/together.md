@@ -25,7 +25,7 @@ Each chapter fixed one principle in isolation. Real designs apply them together 
 
 The invoice domain from the [SRP](srp.html) and [OCP](ocp.html) chapters, rebuilt with every principle in force:
 
-```java-sample dir="lld/solid/together" variant="good" title="The invoice pipeline" files="Marker.java,Invoice.java,InvoiceRepository.java,InvoiceFormatter.java,InvoiceNotifier.java,DatabaseInvoiceRepository.java,FileInvoiceRepository.java,PlainTextInvoiceFormatter.java,InvoiceService.java,Application.java" run
+```java-sample dir="lld/solid/together" verdict="✓ All five applied" variant="good" title="The invoice pipeline" files="Marker.java,Invoice.java,InvoiceRepository.java,InvoiceFormatter.java,InvoiceNotifier.java,DatabaseInvoiceRepository.java,FileInvoiceRepository.java,PlainTextInvoiceFormatter.java,InvoiceService.java,Application.java" run
 ```
 
 ### What each principle bought

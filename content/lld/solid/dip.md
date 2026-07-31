@@ -33,7 +33,7 @@ Two abstractions and their concrete implementations, shared by both versions bel
 
 ## Violation
 
-```java-sample dir="lld/solid/dip/violation" variant="bad" title="High-level module nailed to concrete types" files="MacBook.java,DemoViolation.java" run
+```java-sample dir="lld/solid/dip/violation" verdict="✗ Violates DIP" variant="bad" title="High-level module nailed to concrete types" files="MacBook.java,DemoViolation.java" run
 ```
 
 ### What is wrong
@@ -49,7 +49,7 @@ Note that the `Keyboard` and `Mouse` interfaces **already existed**. Declaring a
 
 The utility code is unchanged. Only the field and constructor **types** change — and that is the whole principle:
 
-```java-sample dir="lld/solid/dip/refactored" variant="good" title="Depend on the abstraction, inject the detail" files="MacBook.java,DemoSolution.java" run
+```java-sample dir="lld/solid/dip/refactored" verdict="✓ Follows DIP" variant="good" title="Depend on the abstraction, inject the detail" files="MacBook.java,DemoSolution.java" run
 ```
 
 ### What it bought

@@ -31,7 +31,7 @@ This framing also explains *why* it matters in a way "one job per class" doesn't
 
 ## Violation
 
-```java-sample dir="lld/solid/srp/violation" variant="bad" title="Invoice does three jobs" files="Marker.java,Invoice.java,Demo.java" run
+```java-sample dir="lld/solid/srp/violation" verdict="✗ Violates SRP" variant="bad" title="Invoice does three jobs" files="Marker.java,Invoice.java,Demo.java" run
 ```
 
 ### What is wrong
@@ -54,7 +54,7 @@ Which means:
 
 Split along the actor boundaries — one class per reason to change:
 
-```java-sample dir="lld/solid/srp/refactored" variant="good" title="One responsibility per class" files="Marker.java,Invoice.java,InvoiceDao.java,InvoicePrinter.java,Demo.java" run
+```java-sample dir="lld/solid/srp/refactored" verdict="✓ Follows SRP" variant="good" title="One responsibility per class" files="Marker.java,Invoice.java,InvoiceDao.java,InvoicePrinter.java,Demo.java" run
 ```
 
 ### What it bought

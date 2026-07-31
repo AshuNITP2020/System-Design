@@ -24,7 +24,7 @@ The starting point is fine — one responsibility, one way to save:
 
 Then "also save to a file" arrives, and the existing class gets edited in place:
 
-```java-sample dir="lld/solid/ocp/violation" variant="bad" title="Editing a tested class to add a variant" files="InvoiceDao.java,Demo.java" run
+```java-sample dir="lld/solid/ocp/violation" verdict="✗ Violates OCP" variant="bad" title="Editing a tested class to add a variant" files="InvoiceDao.java,Demo.java" run
 ```
 
 ### What is wrong
@@ -40,7 +40,7 @@ The class grows one method per requirement, forever, and every one of those requ
 
 Extract the varying behaviour into an interface, and make each variant its own class:
 
-```java-sample dir="lld/solid/ocp/refactored" variant="good" title="Interface + polymorphism" files="InvoiceDao.java,DatabaseInvoiceDao.java,FileInvoiceDao.java,Demo.java" run
+```java-sample dir="lld/solid/ocp/refactored" verdict="✓ Follows OCP" variant="good" title="Interface + polymorphism" files="InvoiceDao.java,DatabaseInvoiceDao.java,FileInvoiceDao.java,Demo.java" run
 ```
 
 Adding MongoDB support is now a *new file* — `class MongoInvoiceDao implements InvoiceDao` — and not a single existing line changes.
@@ -59,7 +59,7 @@ Adding MongoDB support is now a *new file* — `class MongoInvoiceDao implements
 
 Whenever a conditional branches on *what kind of thing* something is, and that conditional grows with each new kind, OCP is being violated:
 
-```java variant="bad" title="Type-switching — the classic OCP smell"
+```java verdict="✗ Violates OCP" variant="bad" title="Type-switching — the classic OCP smell"
 // Every new payment type edits this method - and usually three others like it
 public void pay(String type, double amount) {
     if (type.equals("CARD")) {

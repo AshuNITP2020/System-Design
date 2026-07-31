@@ -2,7 +2,15 @@
 
 Working notes on low-level and high-level software design. Markdown in, searchable static site out, with Java samples that actually compile and run.
 
-**Currently covered:** SOLID principles (5 chapters + synthesis + practice), 13 runnable samples.
+**Currently covered**
+
+| Topic | Pages | Samples |
+| --- | --- | --- |
+| SOLID principles | 8 | 13 |
+| Design patterns — Creational | 7 | 10 |
+| Design patterns — Structural | 8 | 11 |
+| Design patterns — Behavioral | scaffolded | — |
+| High Level Design | scaffolded | — |
 
 ---
 
@@ -42,19 +50,27 @@ content/                 the notes (markdown) - this is what you edit
       _group.json          sidebar label + order for the group
       index.md  srp.md  ocp.md  lsp.md  isp.md  dip.md
       together.md  practice.md
+    patterns/
+      _group.json
+      index.md
+      creational/          _group.json + index.md + one page per pattern
+      structural/          _group.json + index.md + one page per pattern
+      behavioral/          _group.json + index.md  (placeholder)
   hld/
     index.md
 
 code/                    Java samples, mirroring the content tree
   lld/solid/srp/violation/*.java
   lld/solid/srp/refactored/*.java
+  lld/patterns/creational/builder/problem/*.java
+  lld/patterns/structural/decorator/*.java
   ...
 
 assets/                  styles.css, app.js  (copied into site/)
 vendor/codemirror/       vendored editor - no CDN at runtime
 templates/page.html      the page shell
 tools/pdf.sh             site -> single PDF
-build.mjs                the generator (~250 lines, no framework)
+build.mjs                the generator (~280 lines, no framework)
 run.sh                   compile + run a sample
 
 site/                    generated - gitignored
@@ -62,7 +78,9 @@ build/                   compiled .class files - gitignored
 dist/                    generated PDF - gitignored
 ```
 
-The **content tree drives the sidebar**: `content/<section>/<group>/<page>.md`. Sections are declared in `site.config.json`; groups get their label and ordering from a `_group.json` in the directory.
+The **content tree drives the sidebar**, nested to whatever depth you use — `content/lld/patterns/creational/builder.md` renders as *Low Level Design → Design Patterns → Creational → Builder*. Sections are declared in `site.config.json`; every directory below that gets its label and position from a `_group.json`. Add a directory, drop in a `_group.json`, and it appears in the nav.
+
+An `index.md` in a directory is that group's overview page and sorts first automatically (no `order:` needed).
 
 ---
 
@@ -103,6 +121,7 @@ Point at a directory under `code/` instead of pasting a snippet — the notes an
 | `title` | Caption text next to the verdict. |
 | `run` | Adds the "▸ run it" bar. Bare `run` uses `dir`; `run="some/other/path"` overrides it. |
 | `note` | Small italic note under the block. |
+| `verdict` | Overrides the caption. Defaults to *✗ Problem* / *✓ Solution* based on `variant`; the SOLID pages set e.g. `verdict="✗ Violates SRP"`. |
 
 A plain fenced block still works for one-off snippets that don't need to be runnable:
 
@@ -157,8 +176,8 @@ Then either commit `site/` (drop it from `.gitignore` and point Pages at it), or
 
 ## Credits
 
-The SOLID material follows **Shrayansh Jain's Low Level Design series** (*Concept && Coding*) — the structure, the worked examples (`Marker`/`Invoice`, `Bike`/`Bicycle`, `RestaurantEmployee`, `MacBook`) and the terminology come from that course.
+The SOLID and design-pattern material follows **Shrayansh Jain's Low Level Design series** (*Concept && Coding*) — the structure, the worked examples (`Marker`/`Invoice`, `Bike`/`Bicycle`, `RestaurantEmployee`, `MacBook`, `Shape`, `CarFactory`, pizza toppings, the weighing scale, the robot sprites) and the terminology come from that course.
 
-Added while studying, and therefore my own commentary rather than course material: the actor-based framing of SRP, the four LSP contract rules, the DIP vs. DI vs. IoC distinction, detection heuristics, the over-engineering chapter, the code-smell diagnostic table, the combined end-to-end example, and all of the runnable code.
+Added while studying, and therefore my own commentary rather than course material: the actor-based framing of SRP, the four LSP contract rules, the DIP vs. DI vs. IoC distinction, detection heuristics, the over-engineering chapter, the code-smell diagnostic table, the combined end-to-end example, the pattern-selection tables and "which pattern do I actually want" comparisons, the shallow-vs-deep copy and transparency-vs-safety discussions, the notes on where each pattern appears in the JDK and Spring, and all of the runnable code.
 
 Further reading is listed at the end of [Applying SOLID Without Over-Engineering](content/lld/solid/practice.md).

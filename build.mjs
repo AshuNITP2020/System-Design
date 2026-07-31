@@ -55,9 +55,11 @@ function parseAttrs(info) {
   return attrs;
 }
 
+// Default captions are deliberately neutral so they read correctly on a SOLID
+// page and a design-pattern page alike. Override per block with verdict="...".
 const VERDICT = {
-  bad:  { cls: 'bad',  label: '✗ Violates the principle' },
-  good: { cls: 'good', label: '✓ Follows the principle' },
+  bad:  { cls: 'bad',  label: '✗ Problem' },
+  good: { cls: 'good', label: '✓ Solution' },
   neutral: { cls: 'plain', label: '' },
 };
 
@@ -90,6 +92,7 @@ function javaSample(attrs) {
   files = files.filter(f => existsSync(join(abs, f)));
 
   const v = VERDICT[attrs.variant] || VERDICT.neutral;
+  const label = attrs.verdict === true ? v.label : (attrs.verdict || v.label);
   const id = `s${++widgetId}`;
   const tabs = printMode ? '' : files.map((f, i) =>
     `<button class="tab${i === 0 ? ' active' : ''}" data-i="${i}" type="button">${esc(f)}</button>`).join('');
@@ -100,7 +103,7 @@ function javaSample(attrs) {
   return `
 <figure class="sample ${v.cls}" id="${id}">
   <figcaption>
-    <span class="verdict">${v.label ? esc(v.label) : ''}${attrs.title ? `<em>${esc(attrs.title)}</em>` : ''}</span>
+    <span class="verdict">${label ? esc(label) : ''}${attrs.title ? `<em>${esc(attrs.title)}</em>` : ''}</span>
     <span class="actions">
       <button class="act" data-act="copy"  type="button" title="Copy this file">Copy</button>
       <button class="act" data-act="reset" type="button" title="Undo your edits">Reset</button>
@@ -117,6 +120,7 @@ function javaSample(attrs) {
 /** Single inline snippet written directly in the markdown */
 function inlineCode(code, attrs, lang) {
   const v = VERDICT[attrs.variant] || VERDICT.neutral;
+  const label = attrs.verdict === true ? v.label : (attrs.verdict || v.label);
   const id = `s${++widgetId}`;
   const title = attrs.title || (lang === 'java' ? 'Java' : lang || 'text');
   if (lang && lang !== 'java') {
@@ -127,7 +131,7 @@ function inlineCode(code, attrs, lang) {
   return `
 <figure class="sample ${v.cls}" id="${id}">
   <figcaption>
-    <span class="verdict">${v.label ? esc(v.label) : ''}<em>${esc(title)}</em></span>
+    <span class="verdict">${label ? esc(label) : ''}<em>${esc(title)}</em></span>
     <span class="actions">
       <button class="act" data-act="copy"  type="button">Copy</button>
       <button class="act" data-act="reset" type="button">Reset</button>
@@ -205,9 +209,9 @@ function walk(dir, out = []) {
   return out;
 }
 
-function groupMeta(dir) {
-  const f = join(dir, '_group.json');
-  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null;
+function groupMeta(dirParts) {
+  const f = join(CONTENT, ...dirParts, '_group.json');
+  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : {};
 }
 
 const pages = walk(CONTENT).map(file => {
@@ -215,42 +219,50 @@ const pages = walk(CONTENT).map(file => {
   const { data, body } = parseFrontMatter(readFileSync(file, 'utf8'));
   const parts = rel.replace(/\.md$/, '').split('/');
   const isIndex = parts[parts.length - 1] === 'index';
-  const url = (isIndex ? parts.slice(0, -1).join('/') + '/index.html' : parts.join('/') + '.html').replace(/^\//, '');
   return {
-    file, rel, url, body,
+    file, rel, body, isIndex,
+    url: parts.join('/') + '.html',
+    dirParts: parts.slice(0, -1),
     title: data.title || basename(file, '.md'),
     short: data.short || data.title || basename(file, '.md'),
-    order: Number(data.order ?? 999),
+    // an index page is the overview of its directory, so it leads by default
+    order: Number(data.order ?? (isIndex ? -1 : 999)),
     desc: data.desc || '',
     sectionId: parts.length > 1 ? parts[0] : '',
-    groupDir: parts.length > 2 ? join(CONTENT, parts[0], parts[1]) : null,
-    groupId: parts.length > 2 ? parts[1] : '',
   };
 });
 
-/* sidebar tree: section -> group -> pages */
-const tree = [];
-for (const sec of CONFIG.sections) {
-  const secPages = pages.filter(p => p.sectionId === sec.id);
-  if (!secPages.length) continue;
-  const groups = [];
-  const loose = secPages.filter(p => !p.groupId).sort((a, b) => a.order - b.order);
-  const byGroup = new Map();
-  for (const p of secPages.filter(p => p.groupId)) {
-    if (!byGroup.has(p.groupId)) byGroup.set(p.groupId, []);
-    byGroup.get(p.groupId).push(p);
-  }
-  for (const [gid, gp] of byGroup) {
-    const meta = groupMeta(gp[0].groupDir) || {};
-    groups.push({ id: gid, label: meta.label || gid, order: Number(meta.order ?? 999), pages: gp.sort((a, b) => a.order - b.order) });
-  }
-  groups.sort((a, b) => a.order - b.order);
-  tree.push({ ...sec, loose, groups });
+/* Sidebar tree, nested to whatever depth content/ actually uses:
+   section -> group -> subgroup -> ... -> pages. */
+function buildNode(dirParts, secId) {
+  const at = dirParts.length;
+  const key = dirParts.join('/');
+  const inSection = pages.filter(p => p.sectionId === secId);
+  const under = inSection.filter(p => p.dirParts.slice(0, at).join('/') === key);
+
+  const own = under.filter(p => p.dirParts.length === at).sort((a, b) => a.order - b.order);
+  const childIds = [...new Set(under.filter(p => p.dirParts.length > at).map(p => p.dirParts[at]))];
+
+  const children = childIds.map(id => {
+    const cp = [...dirParts, id];
+    const meta = groupMeta(cp);
+    return { id, label: meta.label || id, order: Number(meta.order ?? 999), ...buildNode(cp, secId) };
+  }).sort((a, b) => a.order - b.order);
+
+  return { pages: own, children };
 }
 
-/* flat reading order, for prev/next */
-const flat = [];
-for (const s of tree) { flat.push(...s.loose); for (const g of s.groups) flat.push(...g.pages); }
+const tree = CONFIG.sections
+  .filter(sec => pages.some(p => p.sectionId === sec.id))
+  .map(sec => ({ ...sec, ...buildNode([sec.id], sec.id) }));
+
+/* flat reading order (depth-first), for prev/next */
+function flatten(node, out = []) {
+  out.push(...node.pages);
+  for (const c of node.children) flatten(c, out);
+  return out;
+}
+const flat = tree.flatMap(s => flatten(s));
 const home = pages.find(p => p.url === 'index.html');
 const ordered = [home, ...flat.filter(p => p !== home)].filter(Boolean);
 
@@ -261,23 +273,30 @@ const template = readFileSync(join(ROOT, 'templates', 'page.html'), 'utf8');
 const depthOf = url => url.split('/').length - 1;
 const rootRel = url => depthOf(url) === 0 ? '.' : Array(depthOf(url)).fill('..').join('/');
 
-function sidebar(current) {
-  const R = rootRel(current.url);
-  let html = '';
-  for (const s of tree) {
-    html += `<div class="nav-section"><div class="nav-sec-label">${esc(s.label)}</div>`;
-    const link = p => `<a class="nav-link${p.url === current.url ? ' active' : ''}" href="${R}/${p.url}">
-        ${p.short !== p.title ? `<span class="badge">${esc(p.short)}</span>` : ''}<span>${esc(p.title)}</span></a>`;
-    for (const p of s.loose) html += link(p);
-    for (const g of s.groups) {
-      const open = g.pages.some(p => p.url === current.url);
-      html += `<details class="nav-group"${open ? ' open' : ''}><summary>${esc(g.label)}</summary>`;
-      for (const p of g.pages) html += link(p);
-      html += `</details>`;
-    }
-    html += `</div>`;
+function holds(node, url) {
+  return node.pages.some(p => p.url === url) || node.children.some(c => holds(c, url));
+}
+
+function renderNode(node, current, R, depth) {
+  const link = p => `<a class="nav-link${p.url === current.url ? ' active' : ''}" href="${R}/${p.url}">`
+    + `${p.short !== p.title ? `<span class="badge">${esc(p.short)}</span>` : ''}<span>${esc(p.title)}</span></a>`;
+
+  let html = node.pages.map(link).join('');
+  for (const c of node.children) {
+    const open = holds(c, current.url);
+    html += `<details class="nav-group lvl-${depth}"${open ? ' open' : ''}>`
+      + `<summary>${esc(c.label)}</summary>`
+      + `<div class="nav-children">${renderNode(c, current, R, depth + 1)}</div>`
+      + `</details>`;
   }
   return html;
+}
+
+function sidebar(current) {
+  const R = rootRel(current.url);
+  return tree.map(s =>
+    `<div class="nav-section"><div class="nav-sec-label">${esc(s.label)}</div>`
+    + renderNode(s, current, R, 0) + `</div>`).join('');
 }
 
 rmSync(SITE, { recursive: true, force: true });

@@ -32,7 +32,7 @@ A fifth, practical rule: **no new checked exceptions**. A subtype must not throw
 
 ### Violation
 
-```java-sample dir="lld/solid/lsp/bike-violation" variant="bad" title="A Bicycle that cannot be a Bike" files="Bike.java,MotorCycle.java,Bicycle.java,Demo.java" run
+```java-sample dir="lld/solid/lsp/bike-violation" verdict="✗ Violates LSP" variant="bad" title="A Bicycle that cannot be a Bike" files="Bike.java,MotorCycle.java,Bicycle.java,Demo.java" run
 ```
 
 Run it and you'll see the `MotorCycle` lines print, then an `AssertionError` from `Bicycle.turnOnEngine()`. That crash *is* the principle being violated, live.
@@ -47,7 +47,7 @@ Run it and you'll see the `MotorCycle` lines print, then an `AssertionError` fro
 
 Take the capability that isn't universal out of the base type and give it its own contract:
 
-```java-sample dir="lld/solid/lsp/bike-refactored" variant="good" title="Bike + optional Engine capability" files="Bike.java,Engine.java,MotorCycle.java,Bicycle.java,Demo.java" run
+```java-sample dir="lld/solid/lsp/bike-refactored" verdict="✓ Follows LSP" variant="good" title="Bike + optional Engine capability" files="Bike.java,Engine.java,MotorCycle.java,Bicycle.java,Demo.java" run
 ```
 
 > **Note** — The fix — splitting a fat `Bike` contract into `Bike` + `Engine` — is literally the [Interface Segregation Principle](isp.html). LSP violations caused by "not every subtype supports this method" are almost always ISP violations wearing a different hat.
@@ -65,7 +65,7 @@ A subtler violation. Nothing throws, nothing is left unimplemented — but a **p
 
 ### Violation
 
-```java-sample dir="lld/solid/lsp/vehicle-violation" variant="bad" title="null where the caller expected a Boolean" files="Vehicle.java,MotorCycle.java,Car.java,Bicycle.java,ViolationDemo.java" run
+```java-sample dir="lld/solid/lsp/vehicle-violation" verdict="✗ Violates LSP" variant="bad" title="null where the caller expected a Boolean" files="Vehicle.java,MotorCycle.java,Car.java,Bicycle.java,ViolationDemo.java" run
 ```
 
 The first loop works. The second loop — same code, one extra element — dies with a `NullPointerException`. The client did nothing wrong; the type system told it every `Vehicle` could answer `hasEngine()`.
@@ -74,7 +74,7 @@ The first loop works. The second loop — same code, one extra element — dies 
 
 Push the capability *down* into an intermediate type, so a class that cannot answer `hasEngine()` never exposes it:
 
-```java-sample dir="lld/solid/lsp/vehicle-refactored" variant="good" title="Capability pushed into a subtype" files="Vehicle.java,Bicycle.java,EngineVehicle.java,MotorCycle.java,Car.java,SolutionDemo.java" run
+```java-sample dir="lld/solid/lsp/vehicle-refactored" verdict="✓ Follows LSP" variant="good" title="Capability pushed into a subtype" files="Vehicle.java,Bicycle.java,EngineVehicle.java,MotorCycle.java,Car.java,SolutionDemo.java" run
 ```
 
 > **Tip** — The real win here: a runtime `NullPointerException` that only appears when a bicycle happens to be in the list has become an error the compiler refuses to build. Uncomment the `vehicleList2.add(new Bicycle())` line in `SolutionDemo.java` and the build fails — which is exactly what you want. Pushing correctness from runtime to compile time is the whole point of getting a hierarchy right.

@@ -15,7 +15,7 @@ In short: an interface should never force a client to implement functions it doe
 
 ## Violation — the fat interface
 
-```java-sample dir="lld/solid/isp/violation" variant="bad" title="One interface, five unrelated jobs" files="RestaurantEmployee.java,Waiter.java,ViolationDemo.java" run
+```java-sample dir="lld/solid/isp/violation" verdict="✗ Violates ISP" variant="bad" title="One interface, five unrelated jobs" files="RestaurantEmployee.java,Waiter.java,ViolationDemo.java" run
 ```
 
 ### What is wrong
@@ -30,7 +30,7 @@ That last point is worth sitting with: one bad interface breaks three principles
 
 ## Refactoring — role interfaces
 
-```java-sample dir="lld/solid/isp/refactored" variant="good" title="One interface per role" files="ChefTasks.java,WaiterTasks.java,MaintenanceTasks.java,Chef.java,Waiter.java,Manager.java,SolutionDemo.java" run
+```java-sample dir="lld/solid/isp/refactored" verdict="✓ Follows ISP" variant="good" title="One interface per role" files="ChefTasks.java,WaiterTasks.java,MaintenanceTasks.java,Chef.java,Waiter.java,Manager.java,SolutionDemo.java" run
 ```
 
 Note `Manager` — roles **compose**. An employee who genuinely performs two jobs implements two interfaces, and only then. Segregating the interface doesn't prevent a class from doing several things; it prevents a class from being *forced* to.
