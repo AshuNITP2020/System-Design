@@ -1,0 +1,15 @@
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# stage 2 / 3 local state
+*.db
+*.db-journal
+data/
+logdir/
+
+.idea/
+*.iml
+.vscode/
+.DS_Store

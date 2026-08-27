@@ -1,0 +1,85 @@
+# Three-broker KRaft cluster + live console. This is the stage 6 (replication & ISR) rig.
+#
+#   docker compose -f infra/docker-compose.cluster.yml up -d
+#   open http://localhost:8081
+#
+# The point of this file is that you can kill a broker:
+#   docker stop kafkalab-kafka2
+# ...and watch, in the console and in ./infra/watch.sh, the leader move and the ISR shrink
+# from [1,2,3] to [1,3]. That shrinking list is the entire subject of replication-and-isr.html.
+#
+# All three nodes are broker AND controller, so the metadata quorum is 3 and can survive
+# losing exactly one node. Kill two and the cluster has no quorum — also worth doing once.
+name: kafkalab-cluster
+
+x-broker: &broker
+  image: apache/kafka:4.0.0
+  environment: &broker-env
+    KAFKA_PROCESS_ROLES: broker,controller
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+    KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+    KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:29093,2@kafka2:29093,3@kafka3:29093
+    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+    KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    # Leave this false. Flipping it to true in stage 6 lets an out-of-sync replica become
+    # leader, which silently destroys acknowledged writes. Do that experiment on purpose.
+    KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE: "false"
+    CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    # Named volumes below, so a stopped broker still has its data when you restart it.
+    # That matters here: a restarted follower must catch up from where it left off, and
+    # watching it rejoin the ISR is the point of stage 6.
+    KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+services:
+  kafka1:
+    <<: *broker
+    container_name: kafkalab-kafka1
+    ports: ["9092:9092"]
+    volumes: ["kafka1-data:/var/lib/kafka/data"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: INTERNAL://:19092,HOST://:9092,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:19092,HOST://localhost:9092
+
+  kafka2:
+    <<: *broker
+    container_name: kafkalab-kafka2
+    ports: ["9093:9093"]
+    volumes: ["kafka2-data:/var/lib/kafka/data"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 2
+      KAFKA_LISTENERS: INTERNAL://:19092,HOST://:9093,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka2:19092,HOST://localhost:9093
+
+  kafka3:
+    <<: *broker
+    container_name: kafkalab-kafka3
+    ports: ["9094:9094"]
+    volumes: ["kafka3-data:/var/lib/kafka/data"]
+    environment:
+      <<: *broker-env
+      KAFKA_NODE_ID: 3
+      KAFKA_LISTENERS: INTERNAL://:19092,HOST://:9094,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka3:19092,HOST://localhost:9094
+
+  kafka-ui:
+    image: kafbat/kafka-ui:latest
+    container_name: kafkalab-ui
+    ports: ["8081:8080"]
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafkalab-cluster
+      # All three, so the console survives losing the one you kill.
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:19092,kafka2:19092,kafka3:19092
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on: [kafka1, kafka2, kafka3]
+
+volumes:
+  kafka1-data:
+  kafka2-data:
+  kafka3-data:
