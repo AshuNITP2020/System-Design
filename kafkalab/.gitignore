@@ -1,7 +1,7 @@
-target/
+build/
+.gradle/
 *.class
 *.jar
-!.mvn/wrapper/maven-wrapper.jar
 
 # stage 2 / 3 local state
 *.db

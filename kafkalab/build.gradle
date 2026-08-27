@@ -1,0 +1,32 @@
+// Shared configuration for every stage of the Kafka lab.
+//
+// This file intentionally applies to the kafkalab subprojects ONLY. The root project is a
+// Spring Boot playground for the LLD exercises (splitWise, tictactoe) and the lab must not
+// inherit its starters — each stage's classpath is part of what the stage is teaching.
+
+ext {
+    jacksonVersion = '2.17.2'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    group = 'kafkalab'
+    version = '1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    java {
+        // HttpKit uses Executors.newVirtualThreadPerTaskExecutor(). Virtual threads are 21+.
+        // Do not lower this.
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}

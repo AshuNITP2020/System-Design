@@ -9,7 +9,7 @@ also introduces a problem stage 0 didn't have: **the network**.
 ## Run
 
 ```bash
-./stage1-http-fanout/run-all.sh
+./kafkalab/stage1-http-fanout/run-all.sh
 ```
 
 That starts payment:9001, inventory:9002, email:9003, analytics:9004 and order-service:8080.
@@ -26,7 +26,7 @@ Climb the rungs one at a time and run the experiments between each. Do not jump 
 ### Experiment A — happy path, then look at the clock
 
 ```bash
-./scripts/send-order.sh 8080 order-1
+./kafkalab/scripts/send-order.sh 8080 order-1
 ```
 
 With a sequential loop you're back to additive latency, now *plus* four HTTP round trips. Move to
@@ -38,14 +38,16 @@ With everything running, kill inventory and send an order:
 
 ```bash
 kill $(lsof -ti:9002)
-./scripts/send-order.sh 8080 order-lost
+./kafkalab/scripts/send-order.sh 8080 order-lost
 ```
 
 Now restart inventory and ask it what it knows:
 
 ```bash
-mvn -q -pl stage1-http-fanout exec:java \
-  -Dexec.mainClass=kafkalab.stage1.ConsumerService -Dexec.args="inventory 9002"
+./gradlew -q --console=plain :kafkalab:stage1-http-fanout:runConsumer -Pname=inventory -Pport=9002
+```
+
+```bash
 curl -s localhost:9002/stats
 ```
 
@@ -62,7 +64,7 @@ Climb to rung 3 (retries). Set email's failure rate to 0.5 in `SimulatedService.
 20 orders:
 
 ```bash
-./scripts/burst.sh 20 8080 5
+./kafkalab/scripts/burst.sh 20 8080 5
 ```
 
 Watch the email service's console for `<-- DUPLICATE` lines. Then reason about the nastier case:

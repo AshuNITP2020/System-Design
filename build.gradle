@@ -6,7 +6,14 @@ plugins {
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = '17'
+
+// Bumped 17 -> 21 so this repo has one language level. The kafkalab subprojects require 21
+// (virtual threads in HttpKit); splitWise/tictactoe compile unchanged under it.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()

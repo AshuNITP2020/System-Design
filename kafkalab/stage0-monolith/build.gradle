@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+}
+
+application {
+    mainClass = 'kafkalab.stage0.Monolith'
+}
+
+run {
+    // Keep the server in the foreground so its console is your instrument and Ctrl-C stops it.
+    standardInput = System.in
+}

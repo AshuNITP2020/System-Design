@@ -7,26 +7,22 @@ same thread charges the card, reserves stock, sends the email and records analyt
 replying. Most real systems start here, and for a single-consumer app this is the *correct*
 design — reaching for Kafka now would be the mistake your notes warn about.
 
-## Build
-
-```bash
-mvn -q install -DskipTests
-```
-
-(`install`, not `compile` — `exec:java` below resolves `common` as a jar from your local Maven
-repo. Re-run it whenever you change `common/`; for changes to `Monolith.java` alone, `exec:java`
-recompiles the module itself.)
-
 ## Run
 
+From the repo root (`System Design/`). No separate build step — `run` compiles `common` and this
+stage first, every time.
+
 ```bash
-mvn -q -pl stage0-monolith exec:java
+./gradlew -q --console=plain :kafkalab:stage0-monolith:run
 ```
+
+Wait for `stage0 monolith on http://localhost:8080`. That terminal is now your server console —
+it's where the `[payment] applied order-1` and `<-- DUPLICATE` lines appear. `Ctrl-C` stops it.
 
 Then in another terminal:
 
 ```bash
-./scripts/send-order.sh 8080 order-1
+./kafkalab/scripts/send-order.sh 8080 order-1
 ```
 
 ## Your job
@@ -43,7 +39,7 @@ compare it against what you actually observed rather than what you vaguely remem
 ### Experiment A — latency is additive
 
 ```bash
-./scripts/send-order.sh 8080 order-1
+./kafkalab/scripts/send-order.sh 8080 order-1
 ```
 
 Look at the `time_total` curl reports. Now: payment is 120ms, inventory 80ms, email 200ms,
@@ -58,7 +54,7 @@ analytics 20ms.
 `email` fails 25% of the time. Send 20 orders:
 
 ```bash
-./scripts/burst.sh 20 8080 1
+./kafkalab/scripts/burst.sh 20 8080 1
 ```
 
 Count the 500s. For each failed order, ask the hard question: **payment ran before email.** So:

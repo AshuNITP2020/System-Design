@@ -5,8 +5,8 @@ gets scaffolded when you reach it, so you never read the answer to a problem you
 
 Notes root: `~/Documents/lld-hld-notes/site/hld/kafka/`
 
-**Live viewers** (`infra/README.md`): `./infra/up.sh` then <http://localhost:8081> for the web
-console, `./infra/watch.sh` for the terminal LEADER/REPLICAS/ISR table. Stages 0–3 have no broker,
+**Live viewers** (`infra/README.md`): `./kafkalab/infra/up.sh` then <http://localhost:8081> for the web
+console, `./kafkalab/infra/watch.sh` for the terminal LEADER/REPLICAS/ISR table. Stages 0–3 have no broker,
 so there is nothing in them to view — the viewers start earning their keep at stage 4, and become
 the main event at stages 5 and 6.
 
@@ -111,7 +111,7 @@ file becomes `enable.auto.commit` and `commitSync()` · `auto.offset.reset=earli
 list of things Kafka does for you.
 
 **Viewer:** first stage where it's worth having open. Watch `orders` fill up in the console while
-`./infra/watch.sh` shows your four groups' offsets advancing independently — the visual proof of
+`./kafkalab/infra/watch.sh` shows your four groups' offsets advancing independently — the visual proof of
 what you hand-built in stage 3.
 
 **Notes:** `architecture.html`, `hands-on.html`, `kraft-vs-zookeeper.html`
@@ -138,14 +138,14 @@ partitions is a one-line row in that table, and seeing it is worth more than the
 
 ## Stage 6 — Replication, ISR, acks
 
-3 brokers, RF=3 — `./infra/up.sh cluster`. Then `acks=0|1|all` × `min.insync.replicas=1|2`.
+3 brokers, RF=3 — `./kafkalab/infra/up.sh cluster`. Then `acks=0|1|all` × `min.insync.replicas=1|2`.
 
 **Experiments:** `docker kill` the leader mid-produce and count lost messages per acks setting ·
 stop two brokers with `min.insync.replicas=2` and watch producers refuse to write (availability
 traded for durability, by *your* config choice) · `unclean.leader.election.enable=true` and watch
 committed data vanish.
 
-**Viewer:** the whole stage is a viewer stage. Keep `./infra/watch.sh` open in one split and run
+**Viewer:** the whole stage is a viewer stage. Keep `./kafkalab/infra/watch.sh` open in one split and run
 `docker stop kafkalab-kafka2` in another. The ISR column goes `1,2,3` → `1,3`, the row turns yellow
 as UNDER-REPLICATED, and any partition kafka2 led gets a new leader within seconds. Start it again
 and watch the follower catch up and rejoin the ISR. That ~20 seconds of text output *is*

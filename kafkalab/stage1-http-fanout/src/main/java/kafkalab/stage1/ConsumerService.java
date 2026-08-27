@@ -11,8 +11,11 @@ import java.util.Map;
  * STAGE 1 — one standalone consumer service. Run four of these on four ports.
  *
  * <pre>
- *   mvn -q -pl stage1-http-fanout exec:java \
- *     -Dexec.mainClass=kafkalab.stage1.ConsumerService -Dexec.args="payment 9001"
+ *   ./gradlew -q --console=plain :kafkalab:stage1-http-fanout:runConsumer \
+ *       -Pname=payment -Pport=9001
+ *
+ *   # or all five processes at once:
+ *   ./kafkalab/stage1-http-fanout/run-all.sh
  * </pre>
  *
  * Notice what this class already gives you that stage 0 could not: this process can be deployed,

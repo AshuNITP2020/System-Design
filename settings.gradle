@@ -1,1 +1,8 @@
 rootProject.name = 'System_LLD'
+
+// --- Kafka lab -------------------------------------------------------------
+// One subproject per stage. Add the next line here when you reach the stage;
+// stages you haven't reached deliberately do not exist yet.
+include 'kafkalab:common'
+include 'kafkalab:stage0-monolith'
+include 'kafkalab:stage1-http-fanout'

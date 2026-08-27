@@ -41,11 +41,12 @@ Only the stages you've reached exist as modules. Ask for the next one when you g
 
 ## Run it
 
-One-time setup, and again any time you touch `common/` — `exec:java` resolves `common` from your
-local Maven repo, not from `target/classes`, so `compile` alone is not enough:
+Gradle subprojects of the repo root — run `./gradlew` from `System Design/`, not from here.
+No install step: `project(':kafkalab:common')` is a project dependency, so a change to `common/`
+is picked up on the next build automatically.
 
 ```bash
-mvn -q install -DskipTests
+./gradlew build
 ```
 
 Each stage has its own `README.md` with: the goal, what to build, the **experiment to run**,
@@ -58,14 +59,14 @@ and the questions you should be able to answer before moving on. Start here:
 Two viewers, both in `infra/`, both written for you — a viewer is an instrument, not an exercise.
 
 ```bash
-./infra/up.sh
+./kafkalab/infra/up.sh
 ```
 
 - **web console** → <http://localhost:8081> — topics, partitions, message bytes, keys, group
   membership, lag
-- **terminal view** → `./infra/watch.sh` — brokers, KRaft quorum, and a live
+- **terminal view** → `./kafkalab/infra/watch.sh` — brokers, KRaft quorum, and a live
   `LEADER / REPLICAS / ISR` table that flags under-replicated partitions
-- **cli** → `./infra/kcli.sh kafka-topics.sh --describe --topic orders`
+- **cli** → `./kafkalab/infra/kcli.sh kafka-topics.sh --describe --topic orders`
 
 Stages 0–3 have no broker in them, so there is nothing to look at until stage 4. But
 `infra/README.md` ends with a five-minute **orientation exercise** on an empty cluster — create a
@@ -74,8 +75,16 @@ now; it doesn't spoil any stage's wall.
 
 ## Layout
 
+`kafkalab/` is a set of Gradle subprojects inside the `System_LLD` root build. Every command in
+these READMEs is run from the **repo root** (`System Design/`), where `gradlew` lives.
+
+    build.gradle    Java 21 toolchain + shared config for every stage below
     common/       domain record, JSON, simulated downstream services, latency metrics  (written for you)
     infra/        docker-compose clusters + the two live viewers                       (written for you)
-    stage0..N/    one module per stage  (skeletons with TODOs — you fill these in)
+    stage0..N/    one subproject per stage  (skeletons with TODOs — you fill these in)
     scripts/      send-order.sh, burst.sh
     docs/STAGES.md  full stage-by-stage spec: objectives, experiments, exit questions
+
+Each stage is its own subproject with its own dependencies on purpose: stage 4's `kafka-clients`
+must not be on stage 0's classpath, or the class-by-class diff between stages stops meaning
+anything. Register the next stage in the root `settings.gradle` when you reach it.

@@ -2,7 +2,19 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/System Design.iml" filepath="$PROJECT_DIR$/.idea/System Design.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/System_LLD.kafkalab.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/System_LLD.kafkalab.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/common/System_LLD.kafkalab.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage0-monolith/System_LLD.kafkalab.stage0-monolith.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" />
     </modules>
   </component>
 </project>

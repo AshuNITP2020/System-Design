@@ -6,15 +6,15 @@ it's written for you, like `common/`. Nothing here has TODOs.
 ## Start / stop
 
 ```bash
-./infra/up.sh
+./kafkalab/infra/up.sh
 ```
 
 | Command | What you get |
 | ------- | ------------ |
-| `./infra/up.sh` | 1 broker, KRaft, no ZooKeeper — stages 4, 5, 7, 8 |
-| `./infra/up.sh cluster` | 3 brokers, RF=3 capable — stage 6 |
-| `./infra/down.sh` | stop, keep data |
-| `./infra/down.sh --wipe` | stop, delete every topic/offset/segment |
+| `./kafkalab/infra/up.sh` | 1 broker, KRaft, no ZooKeeper — stages 4, 5, 7, 8 |
+| `./kafkalab/infra/up.sh cluster` | 3 brokers, RF=3 capable — stage 6 |
+| `./kafkalab/infra/down.sh` | stop, keep data |
+| `./kafkalab/infra/down.sh --wipe` | stop, delete every topic/offset/segment |
 
 Only one mode runs at a time — they share container names and host ports, and `up.sh` tears the
 other one down for you. Your Java clients always use `bootstrap.servers=localhost:9092`.
@@ -30,7 +30,7 @@ table, and **Consumers** for live lag.
 ## Viewer 2 — the terminal view
 
 ```bash
-./infra/watch.sh
+./kafkalab/infra/watch.sh
 ```
 
 Refreshes every 2s: live brokers, the KRaft quorum with per-node metadata lag, every partition's
@@ -47,7 +47,7 @@ footer prints the measured time, so you're never guessing whether you're looking
 
 ### The failover walkthrough (verified — this is the real output)
 
-With `./infra/up.sh cluster` and an RF=3 topic, `watch.sh` shows healthy state, then run
+With `./kafkalab/infra/up.sh cluster` and an RF=3 topic, `watch.sh` shows healthy state, then run
 `docker stop kafkalab-kafka2` in another terminal. Within ~10s:
 
 ```
@@ -80,7 +80,7 @@ Three things to notice, and the third is the one people miss:
    whichever brokers happened to survive, and that broker does all the work. Fixing it is a
    deliberate act:
    ```bash
-   ./infra/kcli.sh kafka-leader-election.sh --election-type PREFERRED --all-topic-partitions
+   ./kafkalab/infra/kcli.sh kafka-leader-election.sh --election-type PREFERRED --all-topic-partitions
    ```
    Leader skew after a rolling restart is one of the most common real-world Kafka operational
    surprises, and you just caused and fixed it on purpose.
@@ -91,10 +91,10 @@ Three things to notice, and the third is the one people miss:
 `--bootstrap-server` is added for you.
 
 ```bash
-./infra/kcli.sh kafka-topics.sh --create --topic orders --partitions 3 --replication-factor 1
-./infra/kcli.sh kafka-topics.sh --describe --topic orders
-./infra/kcli.sh kafka-consumer-groups.sh --describe --all-groups
-./infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --property print.key=true
+./kafkalab/infra/kcli.sh kafka-topics.sh --create --topic orders --partitions 3 --replication-factor 1
+./kafkalab/infra/kcli.sh kafka-topics.sh --describe --topic orders
+./kafkalab/infra/kcli.sh kafka-consumer-groups.sh --describe --all-groups
+./kafkalab/infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --property print.key=true
 ```
 
 Run it with no arguments to list every available tool.
@@ -116,16 +116,16 @@ empty cluster makes stage 4 much less abstract. This teaches you nothing about *
 needed — that's what stages 0–3 are for — so it doesn't spoil anything.
 
 ```bash
-./infra/up.sh
-./infra/kcli.sh kafka-topics.sh --create --topic orders --partitions 3 --replication-factor 1
-./infra/kcli.sh kafka-topics.sh --describe --topic orders
+./kafkalab/infra/up.sh
+./kafkalab/infra/kcli.sh kafka-topics.sh --create --topic orders --partitions 3 --replication-factor 1
+./kafkalab/infra/kcli.sh kafka-topics.sh --describe --topic orders
 ```
 
 Open <http://localhost:8081> and find your three partitions. Then:
 
 1. Produce a few records **with keys** and see which partition each lands in:
    ```bash
-   ./infra/kcli.sh kafka-console-producer.sh --topic orders \
+   ./kafkalab/infra/kcli.sh kafka-console-producer.sh --topic orders \
      --property parse.key=true --property key.separator=:
    ```
    Type these four, then Ctrl-D:
@@ -137,7 +137,7 @@ Open <http://localhost:8081> and find your three partitions. Then:
    ```
    Read them back showing key and partition:
    ```bash
-   ./infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning \
+   ./kafkalab/infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning \
      --timeout-ms 8000 --property print.key=true --property print.partition=true
    ```
    You get `user-8`→P0, `user-4`→P1, and **both `user-1` records on P2**. Same key, same
@@ -149,17 +149,17 @@ Open <http://localhost:8081> and find your three partitions. Then:
    hot-partition problem you'll deliberately cause in stage 5.
 2. Read them back twice, as two different groups:
    ```bash
-   ./infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --group g1
-   ./infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --group g2
+   ./kafkalab/infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --group g1
+   ./kafkalab/infra/kcli.sh kafka-console-consumer.sh --topic orders --from-beginning --group g2
    ```
    Both see everything. Reading did not consume. Then re-run `g1` — it sees nothing new, because
    it committed its offsets. Two independent readers, one copy of the data.
-3. `./infra/kcli.sh kafka-topics.sh --describe --topic __consumer_offsets` — the offsets you just
+3. `./kafkalab/infra/kcli.sh kafka-topics.sh --describe --topic __consumer_offsets` — the offsets you just
    committed are stored in a Kafka topic. The log stores its own bookkeeping in a log.
 4. Try `--replication-factor 3` on the single-broker cluster. It refuses. You cannot have three
    copies on one machine — obvious when stated, and it's exactly the wall stage 3 walks you into.
 
-Then close it, run `./infra/down.sh`, and go back to stage 0. **Seeing the finished machine is not
+Then close it, run `./kafkalab/infra/down.sh`, and go back to stage 0. **Seeing the finished machine is not
 the same as knowing why each part is there** — that's still stages 1 through 3.
 
 ## Notes cross-reference

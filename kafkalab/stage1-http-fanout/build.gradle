@@ -1,0 +1,44 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+}
+
+// This stage has two entry points, because it is two kinds of process.
+// `run` starts the producer; consumers are started by name/port below.
+application {
+    mainClass = 'kafkalab.stage1.OrderService'
+}
+
+run {
+    standardInput = System.in
+}
+
+// One consumer, by hand. Used by Experiment B to bring inventory back from the dead:
+//   ./gradlew :kafkalab:stage1-http-fanout:runConsumer -Pname=inventory -Pport=9002
+tasks.register('runConsumer', JavaExec) {
+    group = 'application'
+    description = 'Run a single ConsumerService. Args: -Pname=<service> -Pport=<port>'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage1.ConsumerService'
+    standardInput = System.in
+    doFirst {
+        args = [
+                project.findProperty('name') ?: 'inventory',
+                project.findProperty('port') ?: '9002'
+        ]*.toString()
+    }
+}
+
+// run-all.sh launches five plain JVMs and traps Ctrl-C for all of them, which Gradle's `run`
+// cannot do. It asks Gradle for the runtime classpath once, then gets out of the way.
+tasks.register('printClasspath') {
+    group = 'application'
+    description = 'Print the runtime classpath (used by run-all.sh)'
+    dependsOn 'classes'
+    doLast {
+        println sourceSets.main.runtimeClasspath.asPath
+    }
+}

@@ -1,0 +1,6 @@
+// Written for you: domain record, JSON, simulated downstream services, latency metrics.
+// No stage should ever need to add a dependency here.
+
+dependencies {
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+}

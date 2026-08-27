@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Start the four consumer services + the order service. Ctrl-C kills all of them.
-# Run from the repo root: ./stage1-http-fanout/run-all.sh
+# Run from anywhere: ./kafkalab/stage1-http-fanout/run-all.sh
+#
+# Five plain JVMs, not five `gradlew run` invocations — one Gradle daemon per process would be
+# slow, noisy, and would not die on Ctrl-C. Gradle is asked for the classpath once, then left out.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."          # repo root, where gradlew lives
 
-mvn -q -pl common,stage1-http-fanout -am compile
-
-CP="stage1-http-fanout/target/classes:common/target/classes:$(
-  mvn -q -pl stage1-http-fanout dependency:build-classpath -Dmdep.outputFile=/dev/stdout -DincludeScope=runtime 2>/dev/null | tail -1)"
+CP="$(./gradlew -q --console=plain :kafkalab:stage1-http-fanout:printClasspath | tail -1)"
 
 pids=()
 start() { java -cp "$CP" "$@" & pids+=($!); }
@@ -21,6 +21,6 @@ start kafkalab.stage1.OrderService
 
 trap 'echo; echo "stopping ${#pids[@]} processes"; kill "${pids[@]}" 2>/dev/null || true' EXIT INT TERM
 echo
-echo "all up. try:  ./scripts/send-order.sh 8080 order-1"
+echo "all up. try:  ./kafkalab/scripts/send-order.sh 8080 order-1"
 echo "kill one consumer to run Experiment B:  kill \$(lsof -ti:9002)"
 wait
