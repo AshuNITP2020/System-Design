@@ -9,6 +9,8 @@ import kafkalab.common.SimulatedService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * STAGE 0 — everything in one process, called inline.
@@ -20,6 +22,8 @@ import java.util.Map;
  * <p>Read stage0-monolith/README.md and run the three experiments. Your job is the TODOs below.
  */
 public final class Monolith {
+
+    private static final Logger LOG = Logger.getLogger(Monolith.class.getName());
 
     /** The four things that must happen. Order of this list is the order they run in. */
     static final List<SideEffect> SIDE_EFFECTS = List.of(
@@ -95,6 +99,12 @@ public final class Monolith {
      * which is exactly what stage 4 gives you for free.
      */
     static void placeOrder(OrderPlaced order) throws Exception {
-        throw new UnsupportedOperationException("TODO(2): implement placeOrder");
+        for (SideEffect effect : SIDE_EFFECTS) {
+            try {
+                effect.apply(order);
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "side effect failed: " + effect.name(), e);
+            }
+        }
     }
 }

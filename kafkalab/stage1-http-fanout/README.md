@@ -6,14 +6,71 @@ The microservice refactor everyone does. It fixes genuine problems from stage 0 
 its own process now, with its own deploy, its own language, its own scaling, its own crash. It
 also introduces a problem stage 0 didn't have: **the network**.
 
-## Run
+---
+
+## Purpose of this stage
+
+To take the step the industry actually takes — "our monolith is coupled, let's split it into
+services that call each other over HTTP" — and find out that **it does not decouple anything that
+matters**. Most engineers stop here and believe they're done.
+
+This stage exists so that when someone says "we don't need a broker, the services call each
+other," you know exactly what it costs and can name it.
+
+**You are here to discover:** that push requires both parties alive at the same instant — so a
+consumer that is merely *down* loses the event permanently, with nothing anywhere recording that
+the work is owed.
+
+## What is expected from you
+
+| # | Task | Where | Size |
+| - | ---- | ----- | ---- |
+| 1 | Deserialize, apply, respond 200/500 | `ConsumerService.java` TODO(1) | ~10 lines |
+| 2 | Call `publish`, respond 200/500 | `OrderService.java` TODO(1) | ~4 lines |
+| 3 | `publish()` — **the five-rung ladder** | `OrderService.java` TODO(2) | one rung at a time |
+
+**The ladder is the stage.** Climb it one rung at a time and run the experiment between each; each
+rung fixes the previous one's problem and creates a new one.
+
+| Rung | | Reveals |
+| - | --- | --- |
+| 1 | sequential, abort on first failure | partial fan-out — subscribers after the failing one are never called |
+| 2 | catch per subscriber, log the URL, continue | **run Experiment B here** |
+| 3 | retries with backoff | **duplicates** — something stage 0 could not produce at all |
+| 4 | parallel fan-out | latency becomes max, but the status code becomes meaningless |
+| 5 | retry forever in the background | you need somewhere durable to keep undelivered events → stage 2 |
+
+## Done when you can answer
+
+- [ ] Experiment B: the producer returned 200 — what did inventory actually receive?
+- [ ] Why can't the producer tell "consumer never got it" from "consumer processed it and the ack
+      was lost"? Is that a bug in your code or a property of the universe?
+- [ ] Rung 4 gave you max-instead-of-sum latency but made the HTTP status meaningless. Why?
+- [ ] A slow consumer here pushes back on the producer. In Kafka it doesn't. What structural
+      difference makes that true?
+
+**Status: rungs 1–2 done, Experiment B done and conclusive** (producer said 200, inventory never
+got the order, and nothing will ever deliver it). **Rungs 3–5 still open** — rung 3 is the one that
+produces duplicates, which is where this stage stops being stage 0 with sockets.
+
+## Run — one command, start here
+
+```bash
+./kafkalab/stage1-http-fanout/demo.sh
+```
+
+Builds, starts all five processes, sends orders, prints what each consumer *actually* applied,
+runs Experiment B end to end (kills inventory, sends an order, restarts it, proves the order never
+arrives), then shuts everything down. Nothing is left running afterwards.
+
+## Run — interactively
 
 ```bash
 ./kafkalab/stage1-http-fanout/run-all.sh
 ```
 
 That starts payment:9001, inventory:9002, email:9003, analytics:9004 and order-service:8080.
-Ctrl-C stops everything.
+Ctrl-C stops everything. Use this when you want to poke at it by hand between edits.
 
 ## Your job
 
@@ -37,7 +94,7 @@ rung 4 (parallel) and measure again. Real gain — keep it.
 With everything running, kill inventory and send an order:
 
 ```bash
-kill $(lsof -ti:9002)
+kill $(lsof -ti:9002 -sTCP:LISTEN)
 ./kafkalab/scripts/send-order.sh 8080 order-lost
 ```
 

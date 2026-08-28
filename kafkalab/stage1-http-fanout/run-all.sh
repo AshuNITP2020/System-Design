@@ -22,5 +22,7 @@ start kafkalab.stage1.OrderService
 trap 'echo; echo "stopping ${#pids[@]} processes"; kill "${pids[@]}" 2>/dev/null || true' EXIT INT TERM
 echo
 echo "all up. try:  ./kafkalab/scripts/send-order.sh 8080 order-1"
-echo "kill one consumer to run Experiment B:  kill \$(lsof -ti:9002)"
+# -sTCP:LISTEN is required: plain `lsof -ti:9002` also matches the PRODUCER, which holds a
+# pooled keep-alive connection to that port. Without it you kill the producer too.
+echo "kill one consumer to run Experiment B:  kill \$(lsof -ti:9002 -sTCP:LISTEN)"
 wait

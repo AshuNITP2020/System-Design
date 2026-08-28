@@ -13,6 +13,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage1-http-fanout/System_LLD.kafkalab.stage1-http-fanout.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" />
     </modules>

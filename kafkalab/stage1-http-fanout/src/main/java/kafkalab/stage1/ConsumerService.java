@@ -48,7 +48,14 @@ public final class ConsumerService {
             //          On failure respond 500 — and think about what the *producer* should do with
             //          that 500. Whatever you decide, you are hand-rolling retry policy that
             //          Kafka would hand you as consumer-side offset management.
-            HttpKit.respond(exchange, 501, "{\"error\":\"TODO(1) not implemented\"}");
+            try {
+                String raw = HttpKit.body(exchange);
+                OrderPlaced order = Json.read(raw, OrderPlaced.class);
+                svc.apply(order);
+                HttpKit.respond(exchange, 200, "{\"status\":\"ok\"}");
+            } catch (Exception e) {
+                HttpKit.respond(exchange, 500, Json.write(Map.of("error", String.valueOf(e.getMessage()))));
+            }
         });
 
         HttpKit.route(server, "/stats", exchange ->

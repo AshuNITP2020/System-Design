@@ -7,6 +7,42 @@ same thread charges the card, reserves stock, sends the email and records analyt
 replying. Most real systems start here, and for a single-consumer app this is the *correct*
 design — reaching for Kafka now would be the mistake your notes warn about.
 
+---
+
+## Purpose of this stage
+
+To establish the honest baseline, and to prove — with numbers, not argument — that calling four
+things from one call stack **welds them together**. Every later stage is a response to something
+you measure here.
+
+**You are here to discover:** that a single HTTP status code cannot describe four independent
+outcomes, and that when the response says "failed", the customer may already have been charged.
+
+## What is expected from you
+
+| # | Task | Where | Size |
+| - | ---- | ----- | ---- |
+| 1 | Call `placeOrder`, respond 200/500 | `Monolith.java` TODO(1) | ~6 lines |
+| 2 | Loop `SIDE_EFFECTS`, call `apply` — **naive, no try/catch** | `Monolith.java` TODO(2) | 3 lines |
+| 3 | *After* running the experiments: catch per side effect, **log**, continue | `Monolith.java` TODO(3) | ~5 lines |
+
+Then run **Experiments A, B and C** below, in order, and write down the numbers.
+
+Do TODO(2) the dumb way first. If you jump straight to TODO(3) you will never see a 500, and
+Experiment B — the whole point of the stage — produces nothing.
+
+## Done when you can answer
+
+- [ ] Why is the caller's latency the **sum** and not the max?
+- [ ] For an order that returned HTTP 500, **was the customer charged?** How do you know from the
+      output rather than from reading the code?
+- [ ] Why is replay impossible here — what specifically is missing?
+- [ ] Name the sentence you *cannot* satisfy in this design. (It's about two different failure
+      policies.)
+
+**Status: complete.** Measured 422ms against a 420ms sum; 7/20 orders returned 500 at 403ms vs
+424ms, and that 21ms gap proved payment and inventory had already run.
+
 ## Run
 
 From the repo root (`System Design/`). No separate build step — `run` compiles `common` and this

@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/kafkalab/common" />
             <option value="$PROJECT_DIR$/kafkalab/stage0-monolith" />
             <option value="$PROJECT_DIR$/kafkalab/stage1-http-fanout" />
+            <option value="$PROJECT_DIR$/kafkalab/stage2-db-queue" />
           </set>
         </option>
       </GradleProjectSettings>

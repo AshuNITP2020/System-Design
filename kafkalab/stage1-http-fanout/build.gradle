@@ -25,9 +25,12 @@ tasks.register('runConsumer', JavaExec) {
     mainClass = 'kafkalab.stage1.ConsumerService'
     standardInput = System.in
     doFirst {
+        // providers.gradleProperty(), NOT project.findProperty(). `name` is a built-in
+        // Project getter, so findProperty('name') returns "stage1-http-fanout" and silently
+        // ignores -Pname=email. gradleProperty() reads only -P / gradle.properties.
         args = [
-                project.findProperty('name') ?: 'inventory',
-                project.findProperty('port') ?: '9002'
+                providers.gradleProperty('name').getOrElse('inventory'),
+                providers.gradleProperty('port').getOrElse('9002')
         ]*.toString()
     }
 }

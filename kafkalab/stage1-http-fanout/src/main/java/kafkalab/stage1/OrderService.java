@@ -7,6 +7,7 @@ import kafkalab.common.OrderPlaced;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * STAGE 1 — the producer. Fans an order out to four consumer services over HTTP.
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 public final class OrderService {
 
+    private static Logger logger = Logger.getLogger(OrderService.class.getName());
     /**
      * TODO(0): the smell. Who owns this list? What happens when the fraud team wants in?
      *
@@ -46,9 +48,10 @@ public final class OrderService {
 
                 long t0 = System.nanoTime();
                 // TODO(1): call publish(order); respond 200 on success, 500 on failure.
+                publish(order);
                 REQUEST_LATENCY.record((System.nanoTime() - t0) / 1_000_000);
 
-                HttpKit.respond(exchange, 501, "{\"error\":\"TODO(1) not implemented\"}");
+                HttpKit.respond(exchange, 200, "{\"status\":\"ok\"}");
             } catch (Exception e) {
                 HttpKit.respond(exchange, 500, Json.write(Map.of("error", String.valueOf(e.getMessage()))));
             }
@@ -93,6 +96,12 @@ public final class OrderService {
      * </ol>
      */
     static void publish(OrderPlaced order) throws Exception {
-        throw new UnsupportedOperationException("TODO(2): implement publish");
+        for (String subscriber : SUBSCRIBERS) {
+            try {
+                HttpKit.postJson(subscriber, Json.write(order));
+            } catch (Exception e) {
+                logger.severe("Failed to publish order to " + subscriber + ": " + e.getMessage());
+            }
+        }
     }
 }
