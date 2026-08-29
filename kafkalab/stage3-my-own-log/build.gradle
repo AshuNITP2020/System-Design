@@ -1,0 +1,40 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+    // No database, no driver, no server. A log is a file. That is the point of this stage.
+}
+
+application {
+    mainClass = 'kafkalab.stage3.OrderService'
+}
+
+run {
+    standardInput = System.in
+}
+
+// One consumer group, by name:
+//   ./gradlew :kafkalab:stage3-my-own-log:runConsumer -Pgroup=payment
+//   ./gradlew :kafkalab:stage3-my-own-log:runConsumer -Pgroup=analytics -Pfrom=0   (replay!)
+tasks.register('runConsumer', JavaExec) {
+    group = 'application'
+    description = 'Run one consumer group. Args: -Pgroup=<service> [-Pfrom=<offset>] [-Ppoll=<ms>]'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage3.Consumer'
+    standardInput = System.in
+    doFirst {
+        args = [
+                providers.gradleProperty('group').getOrElse('payment'),
+                providers.gradleProperty('from').getOrElse('-1'),   // -1 = resume from committed
+                providers.gradleProperty('poll').getOrElse('200')
+        ]*.toString()
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    dependsOn 'classes'
+    doLast { println sourceSets.main.runtimeClasspath.asPath }
+}
