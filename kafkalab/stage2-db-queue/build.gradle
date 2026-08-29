@@ -1,0 +1,46 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+    // The whole database is one file. No server, no docker, no daemon — the point of stage 2 is
+    // the *pattern*, not the operational cost of running Postgres.
+    implementation 'org.xerial:sqlite-jdbc:3.46.1.0'
+}
+
+application {
+    mainClass = 'kafkalab.stage2.OrderService'
+}
+
+run {
+    standardInput = System.in
+}
+
+// One worker, by name. Run four of these (payment, inventory, email, analytics):
+//   ./gradlew :kafkalab:stage2-db-queue:runWorker -Pworker=payment
+//
+// -Pworker, not -Pname: `name` collides with Gradle's built-in Project.name and is silently
+// ignored. Same trap that bit stage 1.
+tasks.register('runWorker', JavaExec) {
+    group = 'application'
+    description = 'Run a single Worker. Args: -Pworker=<service> [-Ppoll=<ms>]'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage2.Worker'
+    standardInput = System.in
+    doFirst {
+        args = [
+                providers.gradleProperty('worker').getOrElse('payment'),
+                providers.gradleProperty('poll').getOrElse('200')
+        ]*.toString()
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    description = 'Print the runtime classpath (used by demo.sh)'
+    dependsOn 'classes'
+    doLast {
+        println sourceSets.main.runtimeClasspath.asPath
+    }
+}

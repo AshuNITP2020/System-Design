@@ -16,6 +16,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage2-db-queue/System_LLD.kafkalab.stage2-db-queue.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage3-my-own-log/System_LLD.kafkalab.stage3-my-own-log.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" />
     </modules>
