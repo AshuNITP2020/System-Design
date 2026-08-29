@@ -22,6 +22,12 @@ import java.util.List;
 public final class Consumer {
 
     public static void main(String[] args) throws Exception {
+        // Autoflush. Java block-buffers System.out when it is redirected to a file, so a consumer
+        // killed with Ctrl-C or SIGTERM loses everything it "printed". That cost me a debugging
+        // session on demo.sh — the consumers were working fine and their logs were empty.
+        System.setOut(new java.io.PrintStream(
+                new java.io.FileOutputStream(java.io.FileDescriptor.out), true));
+
         String group = args.length > 0 ? args[0] : "payment";
         long from = args.length > 1 ? Long.parseLong(args[1]) : -1;
         long pollMs = args.length > 2 ? Long.parseLong(args[2]) : 200;
@@ -54,8 +60,35 @@ public final class Consumer {
                 continue;
             }
 
-            // TODO(3): process the batch and commit the offset.
+            // We advance the offset only past records we have actually applied. Crash mid-batch
+            // and the uncommitted records are read again on restart — you'll see DUPLICATE in the
+            // console. That is at-least-once, and it is the deliberate choice here.
             //
+            // On failure we STOP the batch without advancing past the failed record, so it is
+            // retried on the next poll. That buys retry (impossible in stage 1) and costs
+            // head-of-line blocking: one permanently-failing record halts this group forever
+            // while the other three sail past. Real systems escape with a dead-letter topic.
+            long lastHandled = -1;
+            for (Log.Record rec : batch) {
+                try {
+                    OrderPlaced order = Json.read(rec.value(), OrderPlaced.class);
+                    svc.apply(order);
+                    lastHandled = rec.offset();
+                } catch (Exception e) {
+                    System.out.printf("  [%-9s] FAILED at offset %d: %s — will retry%n",
+                            group, rec.offset(), e.getMessage());
+                    break;
+                }
+            }
+
+            if (lastHandled >= 0) {
+                // "next offset to read", hence +1. Move this line ABOVE the loop and you have
+                // built at-most-once instead: a crash would skip the batch entirely.
+                Offsets.commit(group, lastHandled + 1);
+            } else {
+                Thread.sleep(pollMs);   // nothing succeeded; back off before retrying
+            }
+
             // For each record: Json.read(rec.value(), OrderPlaced.class), then svc.apply(order).
             // Then commit with Offsets.commit(group, <the offset AFTER the last one you handled>)
             // — note it is "next offset to read", so it is lastHandled + 1.
@@ -77,7 +110,6 @@ public final class Consumer {
             // Skip it and commit past it, or retry forever and block the group? Stage 2 asked you
             // the same question and it has the same non-answer. Real systems reach for a
             // dead-letter topic here.
-            throw new UnsupportedOperationException("TODO(3): process the batch and commit");
         }
     }
 }

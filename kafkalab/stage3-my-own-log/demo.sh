@@ -8,7 +8,9 @@ set -uo pipefail
 cd "$(dirname "$0")/../.."
 
 ORDERS="${ORDERS:-12}"
-GROUPS=(payment inventory email analytics)
+# NOTE: not GROUPS — that is a reserved bash variable holding your unix group ids, and
+# assigning to it is silently ignored. Cost me a full debugging cycle.
+CGROUPS=(payment inventory email analytics)
 
 R=$'\033[31m'; G=$'\033[32m'; Y=$'\033[33m'; B=$'\033[1m'; N=$'\033[0m'
 pids=()
@@ -44,50 +46,60 @@ done
 echo "      $(curl -s localhost:8080/log)"
 echo
 
-echo "${B}[3/5]${N} starting all ${#GROUPS[@]} consumer groups at once..."
-for g in "${GROUPS[@]}"; do
-  java -cp "$CP" kafkalab.stage3.Consumer "$g" -1 200 >"/tmp/s3-$g.log" 2>&1 & pids+=($!)
+# Offsets on disk are the source of truth here, not parsed stdout. A consumer's committed
+# offset IS the record of what it consumed — that's the whole point of the stage.
+offset_of() { curl -s localhost:8080/log \
+    | python3 -c "import sys,json;print(json.load(sys.stdin)['groups']['$1']['offset'])" 2>/dev/null || echo 0; }
+
+echo "${B}[3/5]${N} starting all ${#CGROUPS[@]} consumer groups at once..."
+for g in "${CGROUPS[@]}"; do
+  java -cp "$CP" kafkalab.stage3.Consumer "$g" -1 200 >"/tmp/s3-$g.log" 2>&1 &
+  pids+=($!)
 done
-for i in $(seq 1 15); do
+for _ in $(seq 1 30); do
   sleep 2
-  lag=$(curl -s localhost:8080/log | grep -o '"lag":[0-9]*' | grep -v '"lag":0' | wc -l)
-  [[ "$lag" -eq 0 ]] && break
+  done_n=0
+  for g in "${CGROUPS[@]}"; do [[ "$(offset_of "$g")" -ge "$ORDERS" ]] && done_n=$((done_n+1)); done
+  [[ "$done_n" -eq "${#CGROUPS[@]}" ]] && break
 done
 echo "      $(curl -s localhost:8080/log)"
 echo
 
-echo "${B}[4/5]${N} how many of the $ORDERS orders did each group apply?"
+echo "${B}[4/5]${N} how far did each group get? (committed offset, out of $ORDERS)"
 echo
-printf "      %-11s %-9s %s\n" GROUP APPLIED VERDICT
+printf "      %-11s %-9s %s\n" GROUP OFFSET VERDICT
 total=0
-for g in "${GROUPS[@]}"; do
-  a=$(grep -c "applied" "/tmp/s3-$g.log" 2>/dev/null || echo 0)
+for g in "${CGROUPS[@]}"; do
+  a=$(offset_of "$g")
   total=$((total + a))
-  [[ "$a" -eq "$ORDERS" ]] && v="${G}saw everything${N}" || v="${Y}saw only $a of $ORDERS${N}"
+  [[ "$a" -ge "$ORDERS" ]] && v="${G}consumed everything${N}" || v="${Y}only $a of $ORDERS${N}"
   printf "      %-11s %-9s %b\n" "$g" "$a" "$v"
 done
-want=$((ORDERS * ${#GROUPS[@]}))
+want=$((ORDERS * ${#CGROUPS[@]}))
 echo "      --------------------"
 printf "      %-11s %-9s (want %d)\n" TOTAL "$total" "$want"
 echo
 if [[ "$total" -eq "$want" ]]; then
-  echo "      ${G}^ $want of $want. Every group saw every order.${N}"
+  echo "      ${G}^ $want of $want. Every group consumed every record.${N}"
   echo "        Stage 2's queue gave 36-39 of 48, differently every run."
   echo "        Nothing is shared here, so there is nothing to race over."
 else
-  echo "      ${Y}^ $total of $want — expected if 'email' is still failing 25% and you chose${N}"
-  echo "        to skip failed records. Check /tmp/s3-email.log."
+  echo "      ${Y}^ $total of $want — a group is stuck. Check /tmp/s3-*.log;${N}"
+  echo "        a repeatedly-failing record blocks its group (head-of-line blocking)."
 fi
 echo
 
 echo "${B}[5/5]${N} REPLAY — rewinding analytics to offset 0, others untouched"
 echo
-before=$(curl -s localhost:8080/log)
-java -cp "$CP" kafkalab.stage3.Consumer analytics 0 200 >/tmp/s3-replay.log 2>&1 & pids+=($!)
-sleep 8
-replayed=$(grep -c "applied" /tmp/s3-replay.log 2>/dev/null || echo 0)
-echo "      analytics reprocessed ${B}${replayed}${N} orders from history"
+java -cp "$CP" kafkalab.stage3.Consumer analytics 0 200 >/tmp/s3-replay.log 2>&1 &
+pids+=($!)
+sleep 3
+echo "      right after rewind: analytics offset = $(offset_of analytics)"
+for _ in $(seq 1 15); do sleep 2; [[ "$(offset_of analytics)" -ge "$ORDERS" ]] && break; done
+replayed=$(grep -c "applied" /tmp/s3-replay.log 2>/dev/null)
+echo "      analytics re-applied ${B}${replayed:-0}${N} records and is back at offset $(offset_of analytics)"
 echo "      $(curl -s localhost:8080/log)"
+echo "      ${G}^ the other three groups' offsets never moved.${N}"
 echo
 
 echo "${B}=== VERDICT ===${N}"

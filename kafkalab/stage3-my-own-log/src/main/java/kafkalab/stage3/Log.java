@@ -1,11 +1,14 @@
 package kafkalab.stage3;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -78,13 +81,24 @@ public final class Log {
      * </ul>
      */
     public static long append(String value) throws IOException {
-        throw new UnsupportedOperationException("TODO(1): implement append");
+        // The offset this record will land at = how many records already exist.
+        // O(n) — see wall #4. Real Kafka keeps the next offset in memory and on disk.
+        long offset = size();
+
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        // `true` = append mode. Nothing already written is ever touched again; that immutability
+        // is the entire reason consumers cannot interfere with each other.
+        try (DataOutputStream out = new DataOutputStream(
+                new BufferedOutputStream(new FileOutputStream(file().toFile(), true)))) {
+            out.writeInt(bytes.length);   // 4-byte big-endian length prefix
+            out.write(bytes);
+        }
+        return offset;
     }
 
     /**
      * Read up to {@code max} records starting at {@code fromOffset}.
      *
-     * <p>TODO(2): open a {@link DataInputStream} over a {@link BufferedInputStream} of the file,
      * then loop: {@code readInt()} to get the length, {@code readNBytes(len)} to get the payload,
      * counting records as you go. Skip records whose index is below {@code fromOffset}; collect
      * the rest until you have {@code max}. Stop when {@code readInt()} throws {@link EOFException}
@@ -126,7 +140,36 @@ public final class Log {
      * </ol>
      */
     public static List<Record> readFrom(long fromOffset, int max) throws IOException {
-        throw new UnsupportedOperationException("TODO(2): implement readFrom");
+        List<Record> out = new ArrayList<>();
+        try (DataInputStream in = new DataInputStream(
+                new BufferedInputStream(new FileInputStream(file().toFile())))) {
+
+            long index = 0;                       // the offset of the record we're about to read
+            while (out.size() < max) {
+                int len;
+                try {
+                    len = in.readInt();
+                } catch (EOFException endOfLog) {
+                    break;                        // normal end of file, not an error
+                }
+
+                byte[] payload = in.readNBytes(len);
+                if (payload.length < len) {
+                    // Torn write: the process died between writing the length and the payload.
+                    // We stop here and treat the log as ending at the last COMPLETE record.
+                    // Note this only catches a truncated payload — if the 4 length bytes are
+                    // themselves corrupt we'd happily try to read a garbage length. Catching
+                    // that needs a CRC per record, which is what real logs carry. Wall #5.
+                    break;
+                }
+
+                if (index >= fromOffset) {
+                    out.add(new Record(index, new String(payload, StandardCharsets.UTF_8)));
+                }
+                index++;
+            }
+        }
+        return out;
     }
 
     /** Total records in the log. Handy for demos and for `append` to compute its offset. */
