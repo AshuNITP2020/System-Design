@@ -1,0 +1,43 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+
+    // The first external dependency that is actually Kafka. Note what it REPLACES:
+    // your Log.java (append + readFrom) and your Offsets.java (position + commit).
+    implementation 'org.apache.kafka:kafka-clients:4.0.0'
+
+    // kafka-clients logs through slf4j. Without a binding you get a warning on every start;
+    // with slf4j-simple at 'warn' you get errors only, and your own printf output stays readable.
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.13'
+}
+
+application {
+    mainClass = 'kafkalab.stage4.OrderService'
+}
+
+run {
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+}
+
+//   ./gradlew :kafkalab:stage4-kafka-single:runConsumer -Pgroup=payment
+tasks.register('runConsumer', JavaExec) {
+    group = 'application'
+    description = 'Run one consumer group. Args: -Pgroup=<service>'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage4.Consumer'
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        args = [providers.gradleProperty('group').getOrElse('payment')]*.toString()
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    dependsOn 'classes'
+    doLast { println sourceSets.main.runtimeClasspath.asPath }
+}
