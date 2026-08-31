@@ -37,6 +37,9 @@ public final class Monolith {
     public static void main(String[] args) throws Exception {
         var server = HttpKit.server(8080);
 
+        // TODO(1) — call placeOrder(order), respond 200 {"status":"ok"}, respond 500 with the
+        //           message if it throws. Exactly one respond per path.
+        //           STATUS: implemented by you.
         HttpKit.route(server, "/orders", exchange -> {
             try {
                 String raw = HttpKit.body(exchange);
@@ -47,10 +50,6 @@ public final class Monolith {
                         in.getOrDefault("userId", "user-?"));
 
                 long t0 = System.nanoTime();
-                // TODO(1): call placeOrder(order) and respond 200 with {"status":"ok"}.
-                //          If it throws, respond 500 with the error message.
-                //          Before you write it, predict: what status does the caller get when
-                //          `email` fails? Is that the behaviour you actually want for an order?
                 placeOrder(order);
                 REQUEST_LATENCY.record((System.nanoTime() - t0) / 1_000_000);
 
@@ -76,9 +75,16 @@ public final class Monolith {
     }
 
     /**
+     * <b>TODO(2)</b> — the simplest possible loop over SIDE_EFFECTS calling apply(order).
+     * No try/catch. Let the first failure propagate, so you actually see the 500s.<br>
+     * <b>TODO(3)</b> — only AFTER running the experiments: catch per side effect, <b>log</b>,
+     * continue.<br>
+     * <i>STATUS: both implemented by you.</i>
+     *
      * Apply every side effect for this order, inline, in this thread.
      *
-     * <p>TODO(2): implement. Simplest possible loop over SIDE_EFFECTS calling apply(order).
+     * <p>A plain loop over SIDE_EFFECTS. That is the whole implementation, and it is the point:
+     * four independent concerns sharing one call stack.
      *
      * <p>Then sit with these questions — they are the entire content of stage 0:
      * <ul>
@@ -92,8 +98,7 @@ public final class Monolith {
      *       last week's orders even come from?
      * </ul>
      *
-     * <p>TODO(3, optional): try wrapping the loop so one failure doesn't abort the rest
-     * (catch per side effect, log, continue). Notice you have now *invented* a policy question:
+     * <p>The catch below is the "continue past failures" policy. Note it invents a question:
      * is a failed email an acceptable loss? Is a failed payment? A monolith forces one answer for
      * all four. Write down what you'd want instead — you're describing per-consumer independence,
      * which is exactly what stage 4 gives you for free.

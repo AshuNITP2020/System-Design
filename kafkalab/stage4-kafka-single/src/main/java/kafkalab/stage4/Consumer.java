@@ -98,6 +98,10 @@ public final class Consumer {
             consumer.subscribe(List.of(OrderService.TOPIC));
             System.out.printf("stage4 consumer group '%s' subscribed to '%s'%n", group, OrderService.TOPIC);
 
+            // TODO(2) — poll, apply each record, then commit. Same at-least-once choice you
+            //           made in stage 3, now spelled commitSync().
+            //           STATUS: implemented for you. group.id + commitSync() replace the whole
+            //           of stage 3's Offsets.java.
             while (true) {
                 // Long poll: blocks up to 1s waiting for records rather than spinning.
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));

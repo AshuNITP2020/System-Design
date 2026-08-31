@@ -64,9 +64,15 @@ public final class Worker {
     }
 
     /**
+     * <b>TODO(1)</b> — the SELECT, then walk the ResultSet building one Job per row.
+     * Reads are a cursor you step through; writes are a single call.<br>
+     * <i>STATUS: implemented by you.</i>
+     *
      * Claim up to {@code limit} un-processed rows for this worker.
      *
-     * and build a {@link Job} per row with {@code Json.read(payload, OrderPlaced.class)}.
+     * <p>The query at rung 1 is
+     * {@code SELECT id, payload FROM outbox WHERE status = 'NEW' ORDER BY id LIMIT ?},
+     * building one {@link Job} per row.
      *
      * <p>Start with exactly that query and <b>run only ONE worker</b>. It will work, and the event
      * will survive the worker being killed — which is genuine, real progress over stage 1. Sit
@@ -135,9 +141,15 @@ public final class Worker {
     }
 
     /**
+     * <b>TODO(2)</b> — UPDATE outbox SET status='DONE' WHERE id=?. Bind with setLong, not
+     * Json.write — Json is for the payload column, scalars use the typed setters.<br>
+     * <i>STATUS: implemented by you.</i>
+     *
      * Mark the row as processed by this worker.
      *
-     * 2 onward the signature's {@code worker} argument starts to matter — that's the hint.
+     * <p>At rung 1 this is a single {@code UPDATE outbox SET status='DONE' WHERE id=?}, and the
+     * {@code worker} argument is unused. From rung 2 onward it starts to matter — which is the
+     * whole problem with a single shared status column.
      */
     static void markDone(String worker, long rowId) throws Exception {
         String sql = "UPDATE outbox SET status='DONE' WHERE id=?";

@@ -56,6 +56,10 @@ public final class OrderService {
                             in.getOrDefault("orderId", "order-?"),
                             in.getOrDefault("userId", "user-?"));
 
+                    // TODO(1) — build a ProducerRecord(topic, key, value) and send it. The KEY
+                    //           decides the partition: murmur2(key) % partitionCount.
+                    //           STATUS: implemented for you. This one line replaces the whole
+                    //           of stage 3's Log.append().
                     long t0 = System.nanoTime();
 
                     // The KEY decides the partition: murmur2(key) % partitionCount. Same key,

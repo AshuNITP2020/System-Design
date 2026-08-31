@@ -61,17 +61,20 @@ public final class Log {
     }
 
     /**
+     * <b>TODO(1)</b> — open the file in APPEND mode, writeInt(bytes.length), write(bytes),
+     * return the offset it landed at.<br>
+     * <i>STATUS: implemented for you, to move faster. This is the heart of the stage and is
+     * worth writing yourself before reading it.</i>
+     *
      * Append one record and return the offset it landed at.
      *
-     * <p>TODO(1): open the file <b>in append mode</b> — {@code new FileOutputStream(file().toFile(),
-     * true)} wrapped in a {@link DataOutputStream} — then {@code writeInt(bytes.length)} followed
-     * by {@code write(bytes)}, where {@code bytes} is {@code value.getBytes(UTF_8)}.
+     * <p>Opened in append mode, so nothing already written is ever touched. The record is a
+     * 4-byte length followed by the payload — see the format above.
      *
-     * <p>The offset to return is the number of records already in the file, which you can get from
-     * {@code readFrom(0, Integer.MAX_VALUE).size()} before you write. That is O(n) and wasteful —
-     * leave it wasteful for now, it becomes wall #4.
+     * <p>The returned offset is the number of records already in the file, obtained by scanning
+     * it. That is O(n) per append and deliberately left wasteful: it becomes wall #4.
      *
-     * <p>Two things to notice once it works:
+     * <p>Two things worth noticing:
      * <ul>
      *   <li>Appending never modifies an existing byte. Stage 2's whole problem was four workers
      *       <em>updating</em> a shared row. Here there is nothing to update, so there is nothing
@@ -97,12 +100,15 @@ public final class Log {
     }
 
     /**
+     * <b>TODO(2)</b> — walk the file: readInt() for the length, readNBytes(len) for the payload,
+     * counting records. Skip anything below fromOffset. EOFException = normal end of file.<br>
+     * <i>STATUS: implemented for you, to move faster.</i>
+     *
      * Read up to {@code max} records starting at {@code fromOffset}.
      *
-     * then loop: {@code readInt()} to get the length, {@code readNBytes(len)} to get the payload,
-     * counting records as you go. Skip records whose index is below {@code fromOffset}; collect
-     * the rest until you have {@code max}. Stop when {@code readInt()} throws {@link EOFException}
-     * — that is the normal end of file, not an error.
+     * <p>Walks the file from the start: {@code readInt()} for the length, {@code readNBytes(len)}
+     * for the payload, counting records as it goes. Anything below {@code fromOffset} is skipped.
+     * An {@link EOFException} from {@code readInt()} is the normal end of file, not an error.
      *
      * <p>Return a list of {@link Record}, each carrying its own offset. The consumer needs that
      * offset to know what to commit.

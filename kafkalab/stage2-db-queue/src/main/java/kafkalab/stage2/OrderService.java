@@ -67,11 +67,13 @@ public final class OrderService {
     }
 
     /**
+     * <b>TODO(1)</b> — one INSERT into outbox.<br>
+     * <i>STATUS: written for you, as the worked JDBC reference the Worker methods copy.</i>
+     *
      * Append the order to the {@code outbox} table.
      *
-     * with {@code Json.write(order)} as the payload, {@code 'NEW'} as the status, and
-     * {@code System.currentTimeMillis()}. Use {@link Db#open()} and a {@link PreparedStatement},
-     * both in try-with-resources.
+     * <p>One {@code INSERT}: {@code Json.write(order)} as the payload, {@code 'NEW'} as the
+     * status, {@code System.currentTimeMillis()} as the timestamp.
      *
      * <p>Before you run it, predict the latency. In stage 1 the producer waited ~420ms for four
      * consumers. Here it waits for one local disk write. Measure it with {@code /stats} — the

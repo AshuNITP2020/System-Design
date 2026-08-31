@@ -60,14 +60,22 @@ public final class Consumer {
                 continue;
             }
 
-            // We advance the offset only past records we have actually applied. Crash mid-batch
-            // and the uncommitted records are read again on restart — you'll see DUPLICATE in the
-            // console. That is at-least-once, and it is the deliberate choice here.
+            // TODO(3) — process the batch, then commit. THE DECISION: commit before the loop
+            //           (at-most-once, a crash loses the batch) or after it (at-least-once, a
+            //           crash reprocesses it). There is no third option.
+            //           STATUS: implemented for you, as AT-LEAST-ONCE.
             //
-            // On failure we STOP the batch without advancing past the failed record, so it is
-            // retried on the next poll. That buys retry (impossible in stage 1) and costs
-            // head-of-line blocking: one permanently-failing record halts this group forever
-            // while the other three sail past. Real systems escape with a dead-letter topic.
+            // We commit only past records actually applied, so a crash mid-batch means those
+            // records are read again on restart — watch for DUPLICATE in the console. Move the
+            // commit ABOVE the loop and you have built at-most-once instead: a crash skips them.
+            //
+            // No arrangement of those two lines gives exactly-once. The apply and the commit live
+            // in two systems with no shared transaction, so you cannot make both happen or
+            // neither. Stage 7 shows Kafka's answer and exactly where it stops being enough.
+            //
+            // On failure we stop the batch without advancing, so the record retries next poll.
+            // That buys retry (impossible in stage 1) and costs head-of-line blocking: one
+            // permanently-failing record halts this group while the other three sail past.
             long lastHandled = -1;
             for (Log.Record rec : batch) {
                 try {
@@ -89,27 +97,6 @@ public final class Consumer {
                 Thread.sleep(pollMs);   // nothing succeeded; back off before retrying
             }
 
-            // For each record: Json.read(rec.value(), OrderPlaced.class), then svc.apply(order).
-            // Then commit with Offsets.commit(group, <the offset AFTER the last one you handled>)
-            // — note it is "next offset to read", so it is lastHandled + 1.
-            //
-            // THE DECISION. You can commit before you process the batch, or after. Pick one, then
-            // prove which you built by killing the consumer mid-batch with `kill -9`:
-            //
-            //   commit BEFORE processing -> a crash loses that batch.        AT-MOST-ONCE
-            //   commit AFTER  processing -> a crash reprocesses that batch.  AT-LEAST-ONCE
-            //                               (watch for DUPLICATE in the console)
-            //
-            // There is no arrangement of these two lines that gives you exactly-once, and that is
-            // not a limitation of your code. Exactly-once needs the *processing* and the *offset
-            // commit* to be one atomic operation — which means they must share a transaction, and
-            // yours are in a file and a service that know nothing about each other. Stage 7 shows
-            // how Kafka does it and exactly where the guarantee stops.
-            //
-            // Also decide: what happens when svc.apply throws? (email fails 25% of the time.)
-            // Skip it and commit past it, or retry forever and block the group? Stage 2 asked you
-            // the same question and it has the same non-answer. Real systems reach for a
-            // dead-letter topic here.
         }
     }
 }

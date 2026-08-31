@@ -38,6 +38,8 @@ public final class OrderService {
     public static void main(String[] args) throws Exception {
         var server = HttpKit.server(8080);
 
+        // TODO(1) — call publish(order), respond 200 on success, 500 on failure.
+        //           STATUS: implemented by you.
         HttpKit.route(server, "/orders", exchange -> {
             try {
                 @SuppressWarnings("unchecked")
@@ -47,7 +49,6 @@ public final class OrderService {
                         in.getOrDefault("userId", "user-?"));
 
                 long t0 = System.nanoTime();
-                // TODO(1): call publish(order); respond 200 on success, 500 on failure.
                 publish(order);
                 REQUEST_LATENCY.record((System.nanoTime() - t0) / 1_000_000);
 
@@ -68,12 +69,16 @@ public final class OrderService {
     }
 
     /**
+     * <b>TODO(2)</b> — the five-rung ladder below. Climb ONE rung at a time and run the
+     * experiment between each; each rung fixes the previous one's problem and creates a new one.<br>
+     * <i>STATUS: rungs 1-2 implemented by you. <b>Rungs 3, 4 and 5 are still open.</b></i><br>
+     * <i>Rung 3 is the one worth doing — retries produce duplicates, which stage 0 could not.</i>
+     *
      * POST the order to every subscriber.
      *
-     * <p>TODO(2): implement with {@code HttpKit.postJson(url, Json.write(order))}. Start with the
-     * dumbest sequential loop that aborts on the first failure. Run Experiment A. Then work
-     * through the variants below <em>in order</em> — each one fixes the previous one's problem and
-     * introduces a new one, and that ladder is the actual lesson of stage 1:
+     * <p>Currently at <b>rung 2</b>: each {@code postJson} wrapped in its own try/catch, failure
+     * logged with the URL, loop continues. Rungs 3-5 below are still to do. Each one fixes the
+     * previous one's problem and introduces a new one, and that ladder is the lesson of stage 1:
      *
      * <ol>
      *   <li><b>Sequential, abort on failure.</b> Latency is the sum again (stage 0 all over

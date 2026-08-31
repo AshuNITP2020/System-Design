@@ -42,12 +42,14 @@ public final class ConsumerService {
 
         var server = HttpKit.server(port);
 
+        // TODO(1) — deserialize with Json.read(raw, OrderPlaced.class), call svc.apply(order),
+        //           respond 200; respond 500 on failure. One respond per path, and keep the
+        //           parse INSIDE the try or a malformed body kills the connection silently.
+        //           STATUS: implemented by you.
+        //
+        // The 500 you return is the producer's problem, and whatever it does with it is retry
+        // policy you are hand-rolling. Kafka gives you that as offset management instead.
         HttpKit.route(server, "/events/order-placed", exchange -> {
-            // TODO(1): deserialize the body into OrderPlaced (Json.read(raw, OrderPlaced.class)),
-            //          call svc.apply(order), respond 200 on success.
-            //          On failure respond 500 — and think about what the *producer* should do with
-            //          that 500. Whatever you decide, you are hand-rolling retry policy that
-            //          Kafka would hand you as consumer-side offset management.
             try {
                 String raw = HttpKit.body(exchange);
                 OrderPlaced order = Json.read(raw, OrderPlaced.class);
