@@ -1,0 +1,46 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+    implementation 'org.apache.kafka:kafka-clients:4.0.0'
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.13'
+}
+
+application {
+    mainClass = 'kafkalab.stage5.OrderService'
+}
+
+// -Pkey=user | order | fixed | none  — changes which partition records land in
+run {
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'key.strategy', providers.gradleProperty('key').getOrElse('user')
+    }
+}
+
+// One MEMBER of a consumer group. Run several with the SAME group and watch them
+// divide the partitions between themselves:
+//   ./gradlew :kafkalab:stage5-partitions-groups:runMember -Pgroup=payment -Pid=A
+tasks.register('runMember', JavaExec) {
+    group = 'application'
+    description = 'Run one group member. Args: -Pgroup=<name> -Pid=<label>'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage5.GroupMember'
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        args = [
+                providers.gradleProperty('group').getOrElse('payment'),
+                providers.gradleProperty('id').getOrElse('A')
+        ]*.toString()
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    dependsOn 'classes'
+    doLast { println sourceSets.main.runtimeClasspath.asPath }
+}

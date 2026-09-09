@@ -1,7 +1,8 @@
 # The nine stages
 
-Full spec so you can see the whole arc. Only stages 0–1 exist as code right now; each later module
-gets scaffolded when you reach it, so you never read the answer to a problem you haven't felt yet.
+Full spec so you can see the whole arc. Stages 0–5 are done and stage 6 is scaffolded; each later
+module gets scaffolded when you reach it, so you never read the answer to a problem you haven't
+felt yet.
 
 Notes root: `~/Documents/lld-hld-notes/site/hld/kafka/`
 
@@ -136,7 +137,7 @@ partitions is a one-line row in that table, and seeing it is worth more than the
 
 ---
 
-## Stage 6 — Replication, ISR, acks
+## Stage 6 — Replication, ISR, acks  *(scaffolded — you are here)*
 
 3 brokers, RF=3 — `./kafkalab/infra/up.sh cluster`. Then `acks=0|1|all` × `min.insync.replicas=1|2`.
 

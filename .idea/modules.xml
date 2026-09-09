@@ -25,6 +25,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage5-partitions-groups/System_LLD.kafkalab.stage5-partitions-groups.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.main.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.test.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkalab/stage6-replication/System_LLD.kafkalab.stage6-replication.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" filepath="$PROJECT_DIR$/.idea/modules/System_LLD.test.iml" />
     </modules>
