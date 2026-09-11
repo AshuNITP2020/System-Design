@@ -326,6 +326,20 @@ replication are two different quorums, and only one of them is `RF`.
       settings, and what happens on the second broker failure?
 - [ ] A partition is offline with an empty ISR. What are your two options and what does each cost?
 
+**Status: implemented and measured.** All three TODOs closed. Experiments A, B and C run; the
+results are in the table above. Two findings the experiments produced that the plan did not
+predict:
+
+*A graceful broker restart loses nothing, even at `acks=1`.* `docker stop` triggers Kafka's
+controlled shutdown, which hands leadership to a caught-up follower before the process exits — the
+handover prevents the very gap that loses data. Losing records at `acks=1` needs an abrupt kill
+(`HARD=1`) under sustained load, and even then a fast local cluster may keep up.
+
+*`min.insync.replicas=2` did nothing at `acks=1`.* Two brokers down, one copy possible, and 60
+writes were accepted without complaint. The topic's minimum is only consulted when the producer
+asks for `acks=all`. Durability is a contract between a topic setting and a client setting, and
+half of it alone is worth nothing.
+
 ## Notes cross-reference
 
 - `replication-and-isr.html` — ISR mechanics, leader election, unclean elections
