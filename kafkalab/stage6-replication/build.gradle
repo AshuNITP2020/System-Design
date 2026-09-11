@@ -1,0 +1,48 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+    implementation 'org.apache.kafka:kafka-clients:4.0.0'
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.13'
+}
+
+application {
+    mainClass = 'kafkalab.stage6.OrderProducer'
+}
+
+// Three brokers now, so bootstrap lists all three. One address would still work — the client
+// discovers the rest — but not if the one you named is the broker you just killed.
+def BOOTSTRAP = 'localhost:9092,localhost:9093,localhost:9094'
+
+// -Packs=0|1|all  -Pcount=<records>  -Ppause=<ms between sends>
+run {
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+        systemProperty 'acks', providers.gradleProperty('acks').getOrElse('1')
+        systemProperty 'count', providers.gradleProperty('count').getOrElse('2000')
+        systemProperty 'pause', providers.gradleProperty('pause').getOrElse('5')
+    }
+}
+
+// Read the topic back and diff it against what the producer was told was acknowledged.
+//   ./gradlew :kafkalab:stage6-replication:audit
+tasks.register('audit', JavaExec) {
+    group = 'application'
+    description = 'Compare the acked-record file against what is actually in the topic'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage6.LossAudit'
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    dependsOn 'classes'
+    doLast { println sourceSets.main.runtimeClasspath.asPath }
+}
