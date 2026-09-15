@@ -1,6 +1,6 @@
 # The nine stages
 
-Full spec so you can see the whole arc. Stages 0–5 are done and stage 6 is scaffolded; each later
+Full spec so you can see the whole arc. Stages 0–6 are done and stage 7 is scaffolded; each later
 module gets scaffolded when you reach it, so you never read the answer to a problem you haven't
 felt yet.
 
@@ -137,7 +137,7 @@ partitions is a one-line row in that table, and seeing it is worth more than the
 
 ---
 
-## Stage 6 — Replication, ISR, acks  *(scaffolded — you are here)*
+## Stage 6 — Replication, ISR, acks  *(done)*
 
 3 brokers, RF=3 — `./kafkalab/infra/up.sh cluster`. Then `acks=0|1|all` × `min.insync.replicas=1|2`.
 
@@ -156,7 +156,7 @@ and watch the follower catch up and rejoin the ISR. That ~20 seconds of text out
 
 ---
 
-## Stage 7 — Delivery semantics
+## Stage 7 — Delivery semantics  *(scaffolded — you are here)*
 
 Make the duplicates from stage 1 Experiment C and stage 3 problem #1 go away — as far as they can.
 

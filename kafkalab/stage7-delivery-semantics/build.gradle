@@ -1,0 +1,86 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':kafkalab:common')
+    implementation 'org.apache.kafka:kafka-clients:4.0.0'
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.13'
+}
+
+application {
+    mainClass = 'kafkalab.stage7.OrderProducer'
+}
+
+// Back to ONE broker for this stage — ./kafkalab/infra/up.sh single. Delivery semantics are a
+// producer/consumer concern; replication was stage 6 and would only add noise here.
+def BOOTSTRAP = 'localhost:9092'
+
+// -Pidem=true|false   turn the idempotent producer on or off   (the stage-7 headline)
+// -Ptimeout=<ms>      request.timeout.ms — short enough to time out before the broker replies,
+//                     which is what forces a retry and therefore a duplicate
+// -Pcount=<n>
+run {
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+        systemProperty 'idempotence', providers.gradleProperty('idem').getOrElse('false')
+        systemProperty 'request.timeout', providers.gradleProperty('timeout').getOrElse('25')
+        systemProperty 'count', providers.gradleProperty('count').getOrElse('500')
+    }
+}
+
+// The at-least-once consumer, with a deliberate crash and an optional dedupe store.
+//   -Pcrash=<n>    halt the JVM after applying n records, BEFORE committing
+//   -Pdedupe=true  consult the idempotency store before applying the side effect
+tasks.register('runConsumer', JavaExec) {
+    group = 'application'
+    description = 'At-least-once consumer. Args: -Pcrash=<n> -Pdedupe=true|false'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage7.AtLeastOnceConsumer'
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+        systemProperty 'crash.after', providers.gradleProperty('crash').getOrElse('0')
+        systemProperty 'dedupe', providers.gradleProperty('dedupe').getOrElse('false')
+    }
+}
+
+// Consume-transform-produce inside a transaction.
+//   -Pabort=<n>   abort every nth transaction, to leave aborted records in the output topic
+tasks.register('runProcessor', JavaExec) {
+    group = 'application'
+    description = 'Transactional processor: orders -> orders-validated. Args: -Pabort=<n>'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage7.TransactionalProcessor'
+    standardInput = System.in
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+        systemProperty 'abort.every', providers.gradleProperty('abort').getOrElse('0')
+        systemProperty 'tx.id', providers.gradleProperty('txid').getOrElse('validator-1')
+    }
+}
+
+// Count duplicates in a topic.
+//   -Ptopic=orders|orders-validated   -Pisolation=read_committed|read_uncommitted
+tasks.register('audit', JavaExec) {
+    group = 'application'
+    description = 'Count total / distinct / duplicate keys in a topic'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'kafkalab.stage7.DupeAudit'
+    systemProperty 'org.slf4j.simpleLogger.defaultLogLevel', 'warn'
+    doFirst {
+        systemProperty 'bootstrap', BOOTSTRAP
+        systemProperty 'topic', providers.gradleProperty('topic').getOrElse('orders')
+        systemProperty 'isolation', providers.gradleProperty('isolation').getOrElse('read_committed')
+    }
+}
+
+tasks.register('printClasspath') {
+    group = 'application'
+    dependsOn 'classes'
+    doLast { println sourceSets.main.runtimeClasspath.asPath }
+}

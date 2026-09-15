@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/kafkalab/stage4-kafka-single" />
             <option value="$PROJECT_DIR$/kafkalab/stage5-partitions-groups" />
             <option value="$PROJECT_DIR$/kafkalab/stage6-replication" />
+            <option value="$PROJECT_DIR$/kafkalab/stage7-delivery-semantics" />
           </set>
         </option>
       </GradleProjectSettings>
