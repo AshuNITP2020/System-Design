@@ -18,7 +18,7 @@ public class DirectionAwareStrategy implements ElevatorSelectionStrategy {
         int minCost = Integer.MAX_VALUE;
 
         for (ElevatorController controller : controllers) {
-            int cost = calculateCost(controller.elevator, requestedFloor, requestedDirection);
+            int cost = calculateCost(controller.getElevator(), requestedFloor, requestedDirection);
 
             if (cost < minCost) {
                 minCost = cost;
