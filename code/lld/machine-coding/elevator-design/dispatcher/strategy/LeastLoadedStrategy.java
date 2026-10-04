@@ -5,7 +5,6 @@ import controller.ElevatorController;
 
 import java.util.List;
 
-// Sends the car with the fewest pending stops, spreading work evenly across the fleet.
 public class LeastLoadedStrategy implements ElevatorSelectionStrategy {
 
     @Override

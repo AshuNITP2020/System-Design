@@ -12,7 +12,7 @@ public class NearestCarStrategy implements ElevatorSelectionStrategy {
         ElevatorController best = elevatorControllers.get(0);
         int bestDistance = Integer.MAX_VALUE;
         for (ElevatorController elevatorController : elevatorControllers) {
-            int distance = Math.abs(elevatorController.elevator.getCurrentFloorNumber() - floor_number);
+            int distance = Math.abs(elevatorController.getElevator().getCurrentFloorNumber() - floor_number);
             if (distance < bestDistance) {
                 bestDistance = distance;
                 best = elevatorController;
